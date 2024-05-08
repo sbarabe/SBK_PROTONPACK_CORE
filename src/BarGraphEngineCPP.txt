@@ -1,0 +1,580 @@
+/*
+ *  BarGraphEngine.cpp is a part of SBK_PROTONPACK_CORE (VERSION 2.1) code for bar graph animations of a Proton Pack replica
+ *  Copyright (c) 2023-2024 Samuel Barabé
+ *
+ *  See this page for reference <https://github.com/sbarabe/SBK_PROTONPACK_CORE>.
+ *
+ *  SBK_PROTONPACK_CORE is free software: you can redistribute it and/or modify it under the terms
+ *  of the GNU General Public License as published by the Free Software Foundation, either version
+ *  3 of the License, or (at your option) any later version.
+ *
+ *  SBK_PROTONPACK_CORE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ *  the GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along with Foobar. If not,
+ *  see <https://www.gnu.org/licenses/>
+ */
+
+#include "BarGraphEngine.h"
+
+BG_MAX72xx_Driver::BG_MAX72xx_Driver(uint8_t numLeds, bool direction, uint8_t dataPin, uint8_t clockPin, uint8_t latchPin)
+    : _numLeds(numLeds), _direction(direction), _latchPin(latchPin), _clockPin(clockPin), _dataPin(dataPin), _bargraph(LedControl(dataPin, clockPin, latchPin, 1))
+{
+    _prevTime = 0;
+        _runningLedTracker = 0;
+    _reverseSeqTracker = false;
+    _fireSeqTracker = 0;
+    bootState = false;
+}
+
+void BG_MAX72xx_Driver::begin()
+{
+    pinMode(_latchPin, OUTPUT);
+    pinMode(_clockPin, OUTPUT);
+    pinMode(_dataPin, OUTPUT);
+    _bargraph.shutdown(0, false);
+    _bargraph.setIntensity(0, 8); // Set maxBri level (0 is min, 15 is max)
+    _bargraph.clearDisplay(0);
+    for (uint8_t i = 0; i < 28; i++)
+    {
+        _ledState[i] = 0;
+    }
+}
+
+void BG_MAX72xx_Driver::update()
+{
+    // To be configure for in relation with bar graph total leds number and connections matrix to the MAX72xx
+    // Leds mapping might be different for your setup, check rows and columns orders : _bargraph.setLed(0, ROW, COL, _ledState[i]))
+    for (int8_t i = 0; i < _numLeds; i++)
+    {
+        int8_t j = i;
+        if (_direction) // If animation is REVERSED
+        {
+            j = (_numLeds - 1) - i;
+        }
+        // set segments according to mapping define in setting
+        _bargraph.setLed(0, BG_SEG_MAP[j][0], BG_SEG_MAP[j][1], _ledState[i]);
+    }
+}
+
+void BG_MAX72xx_Driver::clear()
+{
+    // reset the sequence
+    _reverseSeqTracker = false;
+    _runningLedTracker = 0;
+    _fireSeqTracker = 0;
+    bootState = false;
+    // shut all led's off
+    _setLow();
+}
+
+bool BG_MAX72xx_Driver::boot(uint8_t bootSp, uint8_t idle1Sp, bool init)
+{
+    static bool flag = false;
+    if (init)
+    {
+        _runningLedTracker = _numLeds;
+        bootState = false;
+        flag = false;
+    }
+
+    if (!bootState)
+    {
+        if (millis() - _prevTime >= bootSp)
+        {
+            //_prevTime += (unsigned long)bootSp;
+            _prevTime = millis();
+            if (!flag)
+            {
+                for (int8_t i = _numLeds - 1; i >= 0; i--)
+                {
+                    if (i >= _runningLedTracker)
+                    {
+                        _ledState[i] = true;
+                    }
+                    else
+                    {
+                        _ledState[i] = false;
+                    }
+                }
+                if (_runningLedTracker >= 0)
+                {
+                    _runningLedTracker--;
+                }
+                if (_runningLedTracker < 0)
+                {
+                    flag = true;
+                    _runningLedTracker = _numLeds;
+                }
+            }
+            else
+            {
+                for (int8_t i = _numLeds - 1; i >= 0; i--)
+                {
+                    if (i >= _runningLedTracker)
+                    {
+                        _ledState[i] = false;
+                    }
+                    else
+                    {
+                        _ledState[i] = true;
+                    }
+                }
+                if (_runningLedTracker >= 0)
+                {
+                    _runningLedTracker--;
+                }
+                if (_runningLedTracker < 0)
+                {
+                    bootState = true;
+                    _runningLedTracker = 0;
+                }
+            }
+        }
+    }
+    else
+    {
+        idleOne(idle1Sp);
+    }
+    return bootState;
+}
+
+void BG_MAX72xx_Driver::idleOne(uint8_t idle1Sp)
+{ // In Idle mode safety ON
+    // normal sync animation on the bar graph while safety ON
+    if (millis() - _prevTime >= idle1Sp)
+    {
+        _prevTime = millis();
+        for (int8_t i = 0; i < _numLeds; i++)
+        {
+            // All segements equal and below running led tracker will be ON
+            if (_runningLedTracker <= 0)
+            {
+                _ledState[i] = false;
+            }
+            else
+            {
+                if (i <= _runningLedTracker - 1)
+                {
+                    _ledState[i] = true;
+                }
+                else
+                {
+                    _ledState[i] = false;
+                }
+            }
+        }
+        if (_reverseSeqTracker == false)
+        {
+            _runningLedTracker++;
+            if (_runningLedTracker > _numLeds)
+            {
+                _runningLedTracker = _numLeds;
+                _reverseSeqTracker = true;
+            }
+        }
+        else
+        {
+            if (_runningLedTracker > 0)
+            {
+                _runningLedTracker--;
+            }
+            if (_runningLedTracker == 0)
+            {
+                _reverseSeqTracker = false;
+            }
+        }
+    }
+}
+
+void BG_MAX72xx_Driver::idleTwo(uint8_t idle2Sp)
+{
+    // normal sync animation on the bar graph while safety OFF
+    if (millis() - _prevTime >= idle2Sp)
+    {
+        _prevTime = millis();
+        //constrain(_runningLedTracker, 1, 10);
+        for (int8_t i = 0; i < _numLeds; i++)
+        {
+            // Only segement equal to running led tracker will be ON
+            if (i == _runningLedTracker - 1)
+            {
+                _ledState[i] = true;
+            }
+            else
+            {
+                _ledState[i] = false;
+            }
+        }
+        if (_reverseSeqTracker == false)
+        {
+            _runningLedTracker++;
+            if (_runningLedTracker >= _numLeds)
+            {
+                _runningLedTracker = _numLeds;
+                _reverseSeqTracker = true;
+            }
+        }
+        else
+        {
+            _runningLedTracker--;
+            if (_runningLedTracker <= 1)
+            {
+                _runningLedTracker = 1;
+                _reverseSeqTracker = false;
+            }
+        }
+    }
+}
+
+void BG_MAX72xx_Driver::firing(uint8_t firingSp)
+{
+    if (millis() - _prevTime >= firingSp)
+    {
+        _prevTime = millis();
+        for (int8_t i = 0; i < _numLeds; i++)
+        {
+            if (i == _fireSeqTracker || i == (_numLeds - 1 - _fireSeqTracker))
+            {
+                _ledState[i] = true;
+            }
+            else
+            {
+                _ledState[i] = false;
+            }
+        }
+        if (_reverseSeqTracker == false)
+        {
+            _fireSeqTracker++;
+            if (_fireSeqTracker >= ((_numLeds / 2) - 1))
+            {
+                _fireSeqTracker = ((_numLeds / 2) - 1);
+                _reverseSeqTracker = true;
+            }
+        }
+        else
+        {
+            if (_fireSeqTracker > 0)
+            {
+                _fireSeqTracker--;
+            }
+            if (_fireSeqTracker <= 0)
+            {
+                _reverseSeqTracker = false;
+            }
+        }
+    }
+}
+
+bool BG_MAX72xx_Driver::shuttingDown(uint8_t shutdownSp, bool init)
+{
+    static bool flag = false;
+    if (init)
+    {
+        _runningLedTracker = 0;
+        bootState = true;
+        flag = false;
+    }
+
+    if (bootState)
+    {
+        if (millis() - _prevTime >= shutdownSp)
+        {
+            //_prevTime += shutdownSp;
+            _prevTime = millis();
+            if (!flag)
+            {
+                for (int8_t i = 0; i < _numLeds; i++)
+                {
+                    if (i < _runningLedTracker)
+                    {
+                        _ledState[i] = true;
+                    }
+                    else
+                    {
+                        _ledState[i] = false;
+                    }
+                }
+                if (_runningLedTracker < _numLeds)
+                {
+                    _runningLedTracker++;
+                }
+                if (_runningLedTracker >= _numLeds)
+                {
+                    flag = true;
+                    _runningLedTracker = 0;
+                }
+            }
+            else
+            {
+                for (int8_t i = 0; i < _numLeds; i++)
+                {
+                    if (i < _runningLedTracker)
+                    {
+                        _ledState[i] = false;
+                    }
+                    else
+                    {
+                        _ledState[i] = true;
+                    }
+                }
+                if (_runningLedTracker < _numLeds)
+                {
+                    _runningLedTracker++;
+                }
+                if (_runningLedTracker >= _numLeds)
+                {
+                    bootState = false;
+                    _runningLedTracker = 0;
+                }
+            }
+        }
+    }
+    else
+    {
+        clear();
+    }
+    return bootState;
+}
+
+void BG_MAX72xx_Driver::_setHigh()
+{
+    for (uint8_t i = 0; i < _numLeds; i++)
+    {
+        _ledState[i] = 1; // All LEDs ON
+    }
+}
+
+void BG_MAX72xx_Driver::_setLow()
+{
+    for (uint8_t i = 0; i < _numLeds; i++)
+    {
+        _ledState[i] = 0; // All LEDs OFF
+    }
+}
+
+////////// CODE AND ANIMATIONS TO BE TESTED ///////////////
+/*
+BG595Driver::BG595Driver(uint8_t numLeds, bool direction, uint8_t dataPin, uint8_t clockPin, uint8_t latchPin, unsigned long *currentTime)
+    : _numLeds(numLeds), _direction(direction), _latchPin(latchPin), _clockPin(clockPin), _dataPin(dataPin)
+{
+    _currentTime = currentTime; // pointer
+    _prevTime = 0;
+    _numRegisters = ceil(numLeds / 8.0);
+    _ledsState = 0;
+    _runningLedTracker = 0;
+    _reverseSeqTracker = false;
+    _fireSeqTracker = 0;
+    bootState = false;
+}
+
+void BG595Driver::begin()
+{
+    pinMode(_latchPin, OUTPUT);
+    pinMode(_clockPin, OUTPUT);
+    pinMode(_dataPin, OUTPUT);
+}
+
+void BG595Driver::update()
+{
+    digitalWrite(_latchPin, LOW);
+    for (int i = _numRegisters - 1; i >= 0; i--)
+    {
+        shiftOut(_ledsState >> (i * 8));
+    }
+    digitalWrite(_latchPin, HIGH);
+}
+
+void BG595Driver::setHigh()
+{
+    _ledsState = 0xFFFF; // All LEDs ON
+}
+
+void BG595Driver::setLow()
+{
+    _ledsState = 0; // All LEDs OFF
+}
+
+void BG595Driver::setLed(uint8_t ledNum, bool state)
+{
+    if (ledNum < _numLeds)
+    {
+        if (state)
+            _ledsState |= (1 << ledNum);
+        else
+            _ledsState &= ~(1 << ledNum);
+    }
+}
+
+void BG595Driver::setLeds(uint32_t ledsState)
+{
+    _ledsState = ledsState & ((1 << _numLeds) - 1);
+}
+
+void BG595Driver::shiftOut(uint8_t val)
+{
+    for (uint8_t i = 0; i < 8; i++)
+    {
+        digitalWrite(_clockPin, LOW);
+        digitalWrite(_dataPin, (val & (1 << i)) ? HIGH : LOW);
+        digitalWrite(_clockPin, HIGH);
+    }
+}
+
+bool BG595Driver::boot(uint16_t updateSp)
+{
+    if (*_currentTime - _prevTime >= updateSp)
+    {
+        _prevTime += updateSp;
+        setLed(_runningLedTracker, true);
+        if (_runningLedTracker < _numLeds - 1)
+        {
+            _runningLedTracker++;
+        }
+        if (_runningLedTracker == _numLeds - 1)
+        {
+            bootState = true;
+        }
+    }
+    return bootState;
+}
+
+void BG595Driver::idleOne(uint16_t updateSp)
+{ // In Idle mode safety ON
+    // normal sync animation on the bar graph while safety ON
+    if (*_currentTime - _prevTime >= updateSp)
+    {
+        _prevTime += updateSp;
+        for (uint8_t i = 0; i < _numLeds - 1; i++)
+        {
+            // All segements equal and below running led tracker will be ON
+            if (i <= _runningLedTracker)
+            {
+                setLed(i, true);
+            }
+            else
+            {
+                setLed(i, false);
+            }
+        }
+        if (_reverseSeqTracker == false)
+        {
+            _runningLedTracker++;
+            if (_runningLedTracker == _numLeds - 1)
+            {
+                _reverseSeqTracker = true;
+            }
+        }
+        else
+        {
+            _runningLedTracker--;
+            if (_runningLedTracker = 0)
+            {
+                _reverseSeqTracker = false;
+            }
+        }
+    }
+}
+
+void BG595Driver::idleTwo(uint16_t updateSp)
+{
+    // normal sync animation on the bar graph while safety OFF
+    if (*_currentTime - _prevTime >= updateSp)
+    {
+        _prevTime += updateSp;
+        for (uint8_t i = 0; i < _numLeds - 1; i++)
+        {
+            // Only segement equal to running led tracker will be ON
+            if (i == _runningLedTracker)
+            {
+                setLed(i, true);
+            }
+            else
+            {
+                setLed(i, false);
+            }
+        }
+        if (_reverseSeqTracker == false)
+        {
+            _runningLedTracker++;
+            if (_runningLedTracker == _numLeds - 1)
+            {
+                _reverseSeqTracker = true;
+            }
+        }
+        else
+        {
+            _runningLedTracker--;
+            if (_runningLedTracker = 0)
+            {
+                _reverseSeqTracker = false;
+            }
+        }
+    }
+}
+
+void BG595Driver::firing(uint16_t updateSp)
+{
+    if (*_currentTime - _prevTime >= updateSp)
+    {
+        _prevTime += updateSp;
+        for (uint8_t i = 0; i < _numLeds - 1; i++)
+        {
+            if (i == _fireSeqTracker || i == (_numLeds - 1 - _fireSeqTracker))
+            {
+                setLed(i, true);
+            }
+            else
+            {
+                setLed(i, false);
+            }
+            if (_reverseSeqTracker == false)
+            {
+                _fireSeqTracker++;
+                if (_fireSeqTracker == ((_numLeds / 2) - 1))
+                {
+                    _reverseSeqTracker = true;
+                }
+            }
+            else
+            {
+                _fireSeqTracker--;
+                if (_fireSeqTracker = 0)
+                {
+                    _reverseSeqTracker = false;
+                }
+            }
+        }
+    }
+}
+
+bool BG595Driver::shuttingDown(uint16_t updateSp)
+{
+    if (*_currentTime - _prevTime >= updateSp)
+    {
+        _prevTime += updateSp;
+        setLed(_runningLedTracker, false);
+        if (_runningLedTracker > 0)
+        {
+            _runningLedTracker--;
+        }
+        if (_runningLedTracker == 0)
+        {
+            bootState = false;
+        }
+    }
+    return bootState;
+}
+
+void BG595Driver::clear()
+{
+    // reset the sequence
+    _reverseSeqTracker = false;
+    _runningLedTracker = 0;
+    _fireSeqTracker = 0;
+
+    // shut all led's off
+    setLow();
+}
+*/

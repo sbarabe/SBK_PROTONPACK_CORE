@@ -1,0 +1,52 @@
+/*
+ *  IndicatorEngine.h is a part of SBK_PROTONPACK_CORE (VERSION 2.1) code for animations of a Proton Pack replica
+ *  Copyright (c) 2023-2024 Samuel Barabé
+ *
+ *  See this page for reference <https://github.com/sbarabe/SBK_PROTONPACK_CORE>.
+ *
+ *  SBK_PROTONPACK_CORE is free software: you can redistribute it and/or modify it under the terms
+ *  of the GNU General Public License as published by the Free Software Foundation, either version
+ *  3 of the License, or (at your option) any later version.
+ *
+ *  SBK_PROTONPACK_CORE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See 
+ *  the GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along with Foobar. If not, 
+ *  see <https://www.gnu.org/licenses/>
+ */
+
+#ifndef INDICATORENGINE_H
+#define INDICATORENGINE_H
+
+#include "Arduino.h"
+#include "SBK_CONFIG.h"
+#include <Adafruit_NeoPixel.h>
+
+
+class Indicator
+{
+public:
+    Indicator(Adafruit_NeoPixel &strip,  uint8_t pixel);
+    void setColor(uint8_t red, uint8_t green, uint8_t blue);
+    void begin();
+    void show();
+    void clear();
+    void red();
+    void red(uint16_t updateSp); // flashing
+    void yellow();
+    void yellow(uint16_t updateSp); // flashing
+    void white();
+    void white(uint16_t updateSp); // flashing
+    void green();
+    void green(uint16_t updateSp); // flashing
+    void orange();
+    void orange(uint16_t updateSp); // flashing
+
+private:
+    Adafruit_NeoPixel &_strip;
+        unsigned long _prevTime;
+    uint8_t _pixel;
+};
+
+#endif
