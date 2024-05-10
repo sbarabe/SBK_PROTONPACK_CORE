@@ -46,8 +46,8 @@ Features included:
      *   Fire button :        It does what it says... It also skips to next themes in themes playing mode.
      *   Fire2 button :       Same as fire button but play previous themes in themes playing mode.
  *    Other options :
-     *   Smoke module
-   * and rumble module
+     *     Smoke module
+     *    Rumble module
 
 - ### Simple to use
 
