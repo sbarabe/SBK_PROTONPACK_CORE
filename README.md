@@ -104,7 +104,7 @@ Depending on your project hardware, the following library and their dependencies
 
 ## Sound effects
 
-Has examples, you'll find here some sounds effects that have been remixed for this code. The actual config file uses those track numbers and lengths. Note that the exact sources of the original sound files are unknowed, so it is impossible to way if they are copyrighted, but probably are in some way. Use these sound effects examples at your own risk : https://mega.nz/folder/GZ8TFIzK#W5bunWSMubMsOIHVNrYEIA
+As examples, you'll find here some sounds effects that have been remixed for this code. The actual config file uses those track numbers and lengths. Note that the exact sources of the original sound files are unknowed, so it is impossible to say if they are copyrighted, but probably are in some way. Use these sound effects examples at your own risk : https://mega.nz/folder/GZ8TFIzK#W5bunWSMubMsOIHVNrYEIA
 
 Note : the clipped files have been reduce in gain to lower distorsion on small speakers.
     
