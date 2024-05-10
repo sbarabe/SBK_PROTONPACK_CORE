@@ -41,21 +41,21 @@ bool const DEBUG = false;
 // Update the pins according to your MCU and connections
 // ARDUINO (NANO EVERY) PINS DEFINITION
 // Hardware Serial for serial communication with audio board
-#define HW_RX 0    // to audio board Tx pin, for Nano Every Serial1
-#define HW_TX 1    // to audio board Rx pin, for Nano Every Serial1
-#define SW_RX 2    // If Software Serial is used, to audio board Tx pin
-#define SW_TX 3    // If Software Serial is used,to audio board Rx pin
-#define PK_LEDS 8  // for pack LEDs chain
-#define BG_DIN 9   // connected to bar graph driver DataIn pin / SDA in case of I2C driver
-#define BG_CLK 10  // connected to bar graph driver Clock pin / SCL in cas of I2C driver
-#define BG_LOAD 11 // connected to bar graph driver Load pin, not used for I2C driver
+#define HW_RX 0              // to audio board Tx pin, for Nano Every Serial1
+#define HW_TX 1              // to audio board Rx pin, for Nano Every Serial1
+#define SW_RX 11              // If Software Serial is used, to audio board Tx pin
+#define SW_TX 10              // If Software Serial is used,to audio board Rx pin
+#define PK_LEDS 2           // for pack LEDs chain
+#define BG_DIN A4             // connected to bar graph driver DataIn pin / SDA in case of I2C driver
+#define BG_CLK A5            // connected to bar graph driver Clock pin / SCL in cas of I2C driver
+#define BG_LOAD A6           // connected to bar graph driver Load pin, not used for I2C driver
 // #define BUSY_PIN 12      // Audio player BUSY pin - NOT USE IN THIS CODE
-#define WD_LEDS 12           // for wand LEDs chain
-#define ROD_BUTTON_PIN A7    // same as fire button, but plays previous theme when pressed and released in "Themes mode"
-#define FIRE_BUTTON_PIN A5   // if in Idle Two state, fires gun. Also plays next theme when pressed and released in "Themes mode"
-#define CHARGE_SWITCH_PIN A4 // Goes from Idle One state to Idle Two state : gun can be fire when in Idle two state
-#define BOOT_SWITCH_PIN A3   // Goes from power down to Idle One state, or powered down when switch off from any state
-#define THEME_SWITCH_PIN A2  // Puts the pack in music mode, playings themes one after the other. Use fire/rod buttons to switch themes.
+#define WD_LEDS 3            // for wand LEDs chain
+#define ROD_BUTTON_PIN 5    // same as fire button, but plays previous theme when pressed and released in "Themes mode"
+#define FIRE_BUTTON_PIN 4   // if in Idle Two state, fires gun. Also plays next theme when pressed and released in "Themes mode"
+#define CHARGE_SWITCH_PIN 6 // Goes from Idle One state to Idle Two state : gun can be fire when in Idle two state
+#define BOOT_SWITCH_PIN 7   // Goes from power down to Idle One state, or powered down when switch off from any state
+#define THEME_SWITCH_PIN 8  // Puts the pack in music mode, playings themes one after the other. Use fire/rod buttons to switch themes.
 // Those pin are the REQUIRED pins for pack CORE as it's coded in this unmodified version.
 // Others pins for options are defined later in the config file : smoker, rumbler, volume potentiometer.
 
@@ -86,12 +86,12 @@ const uint32_t RUMBLER_MIN_OFF_TIME = 2000; // in ms
 /*           BAR GRAPH & DRIVER(s)           */
 /*********************************************/
 /*  SELECT (uncomment) ONE DRIVER TYPE :     */
-// #define BG_HT16K33 /* I2C LEDs driver like Adafruit backpack, use 2 pins : SDA, SDC */
-#define BG_MAX72xx /* MAX7219/7221 use 3 pins serial communication : data, clock, load. */
+#define BG_HT16K33 /* I2C LEDs driver like Adafruit backpack, use 2 pins : SDA, SDC */
+// #define BG_MAX72xx /* MAX7219/7221 use 3 pins serial communication : data, clock, load. */
 /* DEFINE DRIVER I2C ADDRESS IF REQUIRED     */
 #define BG_ADDRESS 0x70 // for I2C drivers type
 /*  DEFINE the total segments number on bar graphe :     */
-const uint8_t BARGRAPH_TOTAL_LEDS = 10;
+const uint8_t BARGRAPH_TOTAL_LEDS = 28;
 /*  DEFINE animation direction : */
 const bool BG_DIRECTION = FORWARD; // animation direction (FORWARD/REVERSE)
 /*  DEFINE segments mapping on bar graph driver {ROW,COL}.    */
