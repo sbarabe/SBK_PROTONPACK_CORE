@@ -1,4 +1,5 @@
 # SBK_PROTONPACK_CORE
+## Version 2.2
 Code for lights and sound effects of a Proton Pack replica or other props.
 
 ## Installation
@@ -130,4 +131,8 @@ You should have received a copy of the GNU Lesser General Public License along w
 
 This library is written by Samuel Barabé, inspired by other members of the open source community in the GB props replica, like https://github.com/MikeS11, https://github.com/CountDeMonet and many others .
 
+## Version history
 
+2.1 Release in 2024-05-09
+2.2 Release in 2024-05-10 :
+    - ventEngine fadeOut(uint8_t ramp_time) function corrected : program was stalling on divide by zero...
