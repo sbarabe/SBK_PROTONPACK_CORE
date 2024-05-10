@@ -15,7 +15,7 @@ Depending on your project hardware, the following library and their dependencies
 - For WS2812 LEDs :       Adafruit_NeoPixel.h (https://github.com/adafruit/Adafruit_NeoPixel)
 - For DFPlayer Pro (not fully tested yet) : DFRobot_DF1201S.h (https://github.com/DFRobot/DFRobot_DF1201S)
 - For DFPlayer Mini :     DFRobotDFPlayerMini.h (https://github.com/DFRobot/DFRobotDFPlayerMini)
-   or      DFPlayerMine_Fast.h (https://github.com/PowerBroker2/DFPlayerMini_Fast)
+                          DFPlayerMine_Fast.h (https://github.com/PowerBroker2/DFPlayerMini_Fast)
 
 
 
