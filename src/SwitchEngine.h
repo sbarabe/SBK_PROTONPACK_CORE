@@ -20,7 +20,6 @@
 #define SWITCHESENGINE_H
 
 #include <Arduino.h>
-#include "SBK_CONFIG.h"
 
 class Switch
 {

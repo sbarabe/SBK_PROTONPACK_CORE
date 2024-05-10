@@ -31,7 +31,7 @@ void BarGraphAnimation::clear()
     _reverseSeqTracker = false;
     _runningLedTracker = 0;
     _fireSeqTracker = 0;
-    bootState = false;
+    _bootState = false;
     // shut all led's off
     setLow();
 }
@@ -42,11 +42,11 @@ bool BarGraphAnimation::boot(uint8_t bootSp, uint8_t idle1Sp, bool init)
     if (init)
     {
         _runningLedTracker = _numLeds;
-        bootState = false;
+        _bootState = false;
         flag = false;
     }
 
-    if (!bootState)
+    if (!_bootState)
     {
         if (millis() - _prevTime >= bootSp)
         {
@@ -94,7 +94,7 @@ bool BarGraphAnimation::boot(uint8_t bootSp, uint8_t idle1Sp, bool init)
                 }
                 if (_runningLedTracker < 0)
                 {
-                    bootState = true;
+                    _bootState = true;
                     _runningLedTracker = 0;
                 }
             }
@@ -104,7 +104,7 @@ bool BarGraphAnimation::boot(uint8_t bootSp, uint8_t idle1Sp, bool init)
     {
         idleOne(idle1Sp);
     }
-    return bootState;
+    return _bootState;
 }
 
 void BarGraphAnimation::idleOne(uint8_t idle1Sp)
@@ -259,11 +259,11 @@ bool BarGraphAnimation::shuttingDown(uint8_t shutdownSp, bool init)
     if (init)
     {
         _runningLedTracker = 0;
-        bootState = true;
+        _bootState = true;
         flag = false;
     }
 
-    if (bootState)
+    if (_bootState)
     {
         if (millis() - _prevTime >= shutdownSp)
         {
@@ -311,7 +311,7 @@ bool BarGraphAnimation::shuttingDown(uint8_t shutdownSp, bool init)
                 }
                 if (_runningLedTracker >= _numLeds)
                 {
-                    bootState = false;
+                    _bootState = false;
                     _runningLedTracker = 0;
                 }
             }
@@ -321,7 +321,7 @@ bool BarGraphAnimation::shuttingDown(uint8_t shutdownSp, bool init)
     {
         clear();
     }
-    return bootState;
+    return _bootState;
 }
 
 void BarGraphAnimation::setHigh()
@@ -349,8 +349,15 @@ HT16K33Driver::HT16K33Driver(uint8_t numLeds, bool direction, uint8_t dataPin, u
 {
 }
 
-void HT16K33Driver::begin()
+void HT16K33Driver::begin(const uint8_t segMap[][2], uint8_t rows, uint8_t cols)
 {
+    for (int i = 0; i < rows; ++i)
+    {
+        for (int j = 0; j < cols; ++j)
+        {
+            _segMap[i][j] = segMap[i][j];
+        }
+    }
     _driver.init(_address);
     _driver.setBrightness(15); // Set maxBri level (0 is min, 15 is max)
     _driver.clear();
@@ -369,7 +376,7 @@ void HT16K33Driver::update()
             j = (_numLeds - 1) - i;
         }
         // set segments according to mapping define in setting
-        _driver.setPixel(BG_SEG_MAP[j][0], BG_SEG_MAP[j][1], getLedState(i));
+        _driver.setPixel(_segMap[j][0], _segMap[j][1], getLedState(i));
     }
     _driver.write();
 }
@@ -383,8 +390,15 @@ MAX72xxDriver::MAX72xxDriver(uint8_t numLeds, bool direction, uint8_t dataPin, u
 {
 }
 
-void MAX72xxDriver::begin()
+void MAX72xxDriver::begin(const uint8_t segMap[][2], uint8_t rows, uint8_t cols)
 {
+    for (int i = 0; i < rows; ++i)
+    {
+        for (int j = 0; j < cols; ++j)
+        {
+            _segMap[i][j] = segMap[i][j];
+        }
+    }
     pinMode(_loadPin, OUTPUT);
     pinMode(_clockPin, OUTPUT);
     pinMode(_dataPin, OUTPUT);
@@ -406,6 +420,6 @@ void MAX72xxDriver::update()
             j = (_numLeds - 1) - i;
         }
         // set segments according to mapping define in setting
-        _driver.setLed(0, BG_SEG_MAP[j][0], BG_SEG_MAP[j][1], getLedState(i));
+        _driver.setLed(0, _segMap[j][0], _segMap[j][1], getLedState(i));
     }
 }

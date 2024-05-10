@@ -36,9 +36,23 @@ Powercell::Powercell(Adafruit_NeoPixel &strip, bool direction, uint8_t start, ui
 {
     _prevTime = 0;
     _numLeds = (_end - _start + 1);
+    _ledState = new uint8_t *[_numLeds];
+    for (int i = 0; i < _numLeds; i++)
+    {
+        _ledState[i] = new uint8_t[3];
+    }
     bootState = false;
     _levelTracker = 0;
     _shutdownTracker = _numLeds - 1;
+}
+
+Powercell::~Powercell()
+{
+    for (int i = 0; i < _numLeds; ++i)
+    {
+        delete[] _ledState[i]; // Free memory for each row
+    }
+    delete[] _ledState;
 }
 
 void Powercell::begin() { clear(); }
@@ -334,7 +348,7 @@ int16_t Powercell::_ramp_parameter(int16_t param, int16_t ini, int16_t tg, int16
     { // Ramp UP
         if (param + incr <= tg)
         {
-            param = param+incr;
+            param = param + incr;
         }
         else
         {
@@ -349,7 +363,7 @@ int16_t Powercell::_ramp_parameter(int16_t param, int16_t ini, int16_t tg, int16
         }
         else
         {
-            param = param-incr;
+            param = param - incr;
             if (param < 0)
             {
                 param = 0;

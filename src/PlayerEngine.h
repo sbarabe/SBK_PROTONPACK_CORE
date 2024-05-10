@@ -20,7 +20,6 @@
 #define PLAYERENGINE_H
 
 #include <Arduino.h>
-#include "SBK_CONFIG.h"
 #include <DFRobot_DF1201S.h> //for the DFPlayer Pro
 #include <DFRobotDFPlayerMini.h>
 #include <DFPlayerMini_Fast.h>
@@ -28,7 +27,7 @@
 class Player_DFPlayerMini_Fast
 {
 public:
-    Player_DFPlayerMini_Fast(const uint8_t max, uint8_t volume, uint8_t RX_pin, uint8_t TX_pin, uint8_t pot_pin, bool vol_pot_exist);
+    Player_DFPlayerMini_Fast(const uint8_t max, uint8_t volume, uint8_t RX_pin, uint8_t TX_pin, uint8_t pot_pin, bool vol_pot_exist, const uint8_t commandDelay);
     bool begin(Stream &s);
     bool isPlaying();
     void setThemesPlaymode();
@@ -51,6 +50,7 @@ private:
     unsigned long _startTime;
     unsigned long _startTimePrev;
     const uint8_t _VOLUME_MAX;
+    const uint8_t _COMMAND_DELAY;
     uint8_t _volume;
     uint8_t _prevVolume;
     uint8_t _RX_pin;
@@ -64,7 +64,7 @@ private:
 class Player_DFPlayerMini
 {
 public:
-    Player_DFPlayerMini(const uint8_t max, uint8_t volume, uint8_t RX_pin, uint8_t TX_pin, uint8_t pot_pin, bool vol_pot_exist);
+    Player_DFPlayerMini(const uint8_t max, uint8_t volume, uint8_t RX_pin, uint8_t TX_pin, uint8_t pot_pin, bool vol_pot_exist, const uint8_t commandDelay);
     bool begin(Stream &s);
     bool isPlaying();
     void setThemesPlaymode();
@@ -87,6 +87,7 @@ private:
     unsigned long _startTime;
     unsigned long _startTimePrev;
     const uint8_t _VOLUME_MAX;
+    const uint8_t _COMMAND_DELAY;
     uint8_t _volume;
     uint8_t _prevVolume;
     uint8_t _RX_pin;

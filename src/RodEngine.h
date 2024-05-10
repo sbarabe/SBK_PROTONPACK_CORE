@@ -19,17 +19,19 @@
 #ifndef RODENGINE_H
 #define RODENGINE_H
 
+#include "Arduino.h"
 #include <Adafruit_NeoPixel.h>
-#include "SBK_CONFIG.h"
 
 class FiringRod
 {
 public:
     FiringRod(Adafruit_NeoPixel &strip, uint8_t start, uint8_t end);
+    ~FiringRod();
     void begin();
     void update();
     void clear();
     void fireStrobe(uint8_t updateInterval);
+    void tail(uint16_t fadeOutTime);
 
 private:
     void _setColorAll(uint8_t red, uint8_t green, uint8_t blue);
@@ -37,6 +39,8 @@ private:
     Adafruit_NeoPixel &_strip;
     uint8_t _start;
     uint8_t _end;
+    uint8_t _numLeds;
+    uint8_t** _ledState;
     unsigned long _prevUpdate;
 };
 

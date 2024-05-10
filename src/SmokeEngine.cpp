@@ -18,7 +18,13 @@
 
 #include "SmokeEngine.h"
 
-Smoker::Smoker(uint8_t pin, bool exist) : _pin(pin), _exist(exist)
+Smoker::Smoker(uint8_t pin,
+               const uint32_t *maxOnTime,
+               const uint32_t *minOffTime,
+               bool exist) : _pin(pin),
+                             _ptr_MAX_ON_TIME(maxOnTime),
+                             _ptr_MIN_OFF_TIME(minOffTime),
+                             _exist(exist)
 {
     _prevStart = 0;
     _prevUpdate = 0;
@@ -50,7 +56,7 @@ void Smoker::update()
                 smokeOFF();
             }
 
-            if (millis() - _prevStart >= SMOKER_MAX_ON_TIME)
+            if (millis() - _prevStart >= *_ptr_MAX_ON_TIME)
             {
                 _burstDuration = 0;
                 smokeOFF();
@@ -75,7 +81,7 @@ void Smoker::smokeON()
 {
     if (_exist)
     {
-        if (!_state && ((millis() - _prevStop) >= SMOKER_MIN_OFF_TIME))
+        if (!_state && ((millis() - _prevStop) >= *_ptr_MIN_OFF_TIME))
         {
             digitalWrite(_pin, HIGH);
             _prevStart = millis();

@@ -19,13 +19,14 @@
 #ifndef POWERCELLENGINE_H
 #define POWERCELLENGINE_H
 
+#include "Arduino.h"
 #include <Adafruit_NeoPixel.h>
-#include "SBK_CONFIG.h"
 
 class Powercell
 {
 public:
     Powercell(Adafruit_NeoPixel &strip, bool direction, uint8_t start, uint8_t end);
+    ~Powercell();
     void begin();
     void setDirection(bool direction);
     void update();
@@ -53,7 +54,7 @@ private:
     uint8_t _end;
     unsigned long _prevTime;
     uint8_t _numLeds;
-    uint8_t _ledState[POWERCELL_LAST_LED - POWERCELL_1ST_LED + 1][3];
+    uint8_t** _ledState;
     int8_t _levelTracker;
     int8_t _shutdownTracker;
     int16_t _updateSp;

@@ -9,10 +9,10 @@
  *  3 of the License, or (at your option) any later version.
  *
  *  SBK_PROTONPACK_CORE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See 
+ *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
  *  the GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License along with Foobar. If not, 
+ *  You should have received a copy of the GNU General Public License along with Foobar. If not,
  *  see <https://www.gnu.org/licenses/>
  */
 
@@ -20,33 +20,33 @@
 #define INDICATORENGINE_H
 
 #include "Arduino.h"
-#include "SBK_CONFIG.h"
 #include <Adafruit_NeoPixel.h>
-
 
 class Indicator
 {
 public:
-    Indicator(Adafruit_NeoPixel &strip,  uint8_t pixel);
+    Indicator(Adafruit_NeoPixel &strip, uint8_t pixel);
     void setColor(uint8_t red, uint8_t green, uint8_t blue);
     void begin();
     void show();
     void clear();
-    void red();
-    void red(uint16_t updateSp); // flashing
-    void yellow();
+    void red(uint16_t updateSp);    // flashing
     void yellow(uint16_t updateSp); // flashing
-    void white();
-    void white(uint16_t updateSp); // flashing
-    void green();
-    void green(uint16_t updateSp); // flashing
-    void orange();
+    void white(uint16_t updateSp);  // flashing
+    void green(uint16_t updateSp);  // flashing
     void orange(uint16_t updateSp); // flashing
 
 private:
+    void _red();
+    void _yellow();
+    void _white();
+    void _green();
+    void _orange();
     Adafruit_NeoPixel &_strip;
-        unsigned long _prevTime;
+    unsigned long _prevTime;
     uint8_t _pixel;
+    bool _flashingState;
+    bool _pulse;
 };
 
 #endif

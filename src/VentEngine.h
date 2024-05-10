@@ -19,8 +19,8 @@
 #ifndef VENTENGINE_H
 #define VENTENGINE_H
 
+#include <Arduino.h>
 #include <Adafruit_NeoPixel.h>
-#include "SBK_CONFIG.h"
 
 class Vent
 {
@@ -33,6 +33,8 @@ public:
     void warming(int16_t warming_time, bool init);
     void cooling(int16_t cooling_time, bool init);
     void shutdown(int16_t cooling_time, bool init);
+    void rampToCoolBlue(int16_t ramp_time, bool init);
+    void fadeOut(int16_t ramp_time, bool init);
     void setColor(uint8_t red, uint8_t green, uint8_t blue);
 
 private:
@@ -41,6 +43,7 @@ private:
     Adafruit_NeoPixel &_strip;
     unsigned long _prevTime;
     unsigned long _prevTimeRed;
+    unsigned long _prevTimeGreen;
     unsigned long _prevTimeBlue;
     uint8_t _start;
     uint8_t _end;
@@ -49,10 +52,10 @@ private:
     int16_t _greenTracker;
     int16_t _blueTracker;
     int16_t _initRedTracker;
-    // int16_t _initGreenTracker;
+    int16_t _initGreenTracker;
     int16_t _initBlueTracker;
     int16_t _intervalRed;
-    // int16_t _intervalGreen;
+    int16_t _intervalGreen;
     int16_t _intervalBlue;
 };
 

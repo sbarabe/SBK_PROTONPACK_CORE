@@ -45,11 +45,11 @@ bool const DEBUG = false;
 #define HW_TX 1              // to audio board Rx pin, for Nano Every Serial1
 #define SW_RX 2              // If Software Serial is used, to audio board Tx pin
 #define SW_TX 3              // If Software Serial is used,to audio board Rx pin
-#define PK_LEDS 8            // for pack LEDs chain
+#define PK_LEDS 12            // for pack LEDs chain
 #define BG_DIN 9             // connected to bar graph driver DataIn pin / SDA in case of I2C driver
 #define BG_CLK 10            // connected to bar graph driver Clock pin / SCL in cas of I2C driver
 #define BG_LOAD 11           // connected to bar graph driver Load pin, not used for I2C driver
-#define WD_LEDS 12           // for wand LEDs chain
+#define WD_LEDS 8           // for wand LEDs chain
 #define ROD_BUTTON_PIN A7    // same as fire button, but plays previous theme when pressed and released in "Themes mode"
 #define FIRE_BUTTON_PIN A5   // if in Idle Two state, fires gun. Also plays next theme when pressed and released in "Themes mode"
 #define CHARGE_SWITCH_PIN A4 // Goes from Idle One state to Idle Two state : gun can be fire when in Idle two state
@@ -169,7 +169,6 @@ const uint8_t CYC_POS3_1ST_LED = 21;
 const uint8_t CYC_POS3_LAST_LED = 27;
 const uint8_t CYC_POS4_1ST_LED = 28;
 const uint8_t CYC_POS4_LAST_LED = 34;
-const uint8_t CYC_NUMLEDS = CYC_POS4_LAST_LED - CYC_POS1_1ST_LED + 1; // Don't change this line
 #endif
 /***************************/
 /* >>>>> AF/FE style <<<<< */
@@ -177,7 +176,6 @@ const uint8_t CYC_NUMLEDS = CYC_POS4_LAST_LED - CYC_POS1_1ST_LED + 1; // Don't c
 #ifdef AFFE
 const uint8_t CYC_RING_1ST_LED = 0;                                   // Cyclotron first pixel index position in WS2812 pack chain
 const uint8_t CYC_RING_LAST_LED = 44;                                 // Cyclotron last pixel index position in WS2812 pack chain
-const uint8_t CYC_NUMLEDS = CYC_RING_LAST_LED - CYC_RING_1ST_LED + 1; // Don't change this line
 #endif
 
 /*********************************************/
@@ -235,12 +233,12 @@ const uint16_t AUDIO_ADVANCE = 150;        // short advance to call the next tra
 /* root folder. They are played in the order they have been put on the flash drive, not by trackname */
 /* Also, TRACK NUMBERS FIT PACK STATES, it's part of the core program, this order should be mainntain/corrected that way */
 const int16_t BOOT_TRACK = 1;
-const int16_t UNLOADED_IDLE_TRACK = 2;
-const int16_t CHARGED_IDLE_TRACK = 3;
+const int16_t UNLOADED_IDLE_TRACK = 2;  // Looping track
+const int16_t CHARGED_IDLE_TRACK = 3;   // Looping track
 const int16_t CHARGING_TRACK = 4;
 const int16_t UNLOADING_TRACK = 5;
 const int16_t FIRING_RAMP_TRACK = 6;
-const int16_t FIRING_MAX_TRACK = 7;
+const int16_t FIRING_MAX_TRACK = 7;     // Looping track
 const int16_t FIRING_OVERHEAT_TRACK = 8;
 const int16_t TAIL_TRACK = 9;
 const int16_t TAIL_OVERHEAT_TRACK = 10;
@@ -256,16 +254,16 @@ const int16_t SHUTDOWN_TRACK = 11;
 const uint16_t TRACK_LENGTH[] = {
     0,     // no track, it just to offset with tracks index
     5000,  // track #1
-    5000,  // track #2
-    5000,  // track #3
+    10000, // track #2
+    10000, // track #3
     3000,  // track #4
     3000,  // track #5
-    16000, // track #6
-    5000,  // track #7
-    10000, // track #8
+    10000, // track #6
+    7000,  // track #7
+    7000,  // track #8
     3000,  // track #9
-    6000,  // track #10
-    5000   // track #11
+    5000,  // track #10
+    3000   // track #11
 };
 /****************************/
 /* SOUND FX TRACKS LOOPING  */
@@ -313,8 +311,8 @@ const uint8_t STATE_SHUTTING_DOWN = 11;  // the pack is in the process of shutti
 /****************************/
 /*      GENERAL TIMER       */
 /****************************/
-const uint16_t FIRING_WARNING_DELAY = 10000; //in mS, how long before indicator is falshing yellow
-const uint32_t FIRING_DURATION = 40000;          // in mS, how long max firing state before overheat
-//const uint16_t FIRING_OVERHEAT_DURATION = 15000; // STATE_FIRING_OVERHEAT duration
+const uint16_t FIRING_WARNING_DELAY = 10000; // in mS, how long before indicator is falshing yellow
+const uint32_t FIRING_DURATION = 40000;      // in mS, how long max firing state before overheat
+// const uint16_t FIRING_OVERHEAT_DURATION = 15000; // STATE_FIRING_OVERHEAT duration
 
 #endif

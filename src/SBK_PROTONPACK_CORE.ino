@@ -145,7 +145,7 @@ const bool LOOP = true;                                        // helper for aud
 #include <LedControl.h>
 MAX72xxDriver bargraph(BARGRAPH_TOTAL_LEDS, BG_DIRECTION, BG_DIN, BG_CLK, BG_LOAD);
 #elif defined(BG_HT16K33)
-#include <ht16k33.h>
+#include <HT16K33.h>
 HT16K33Driver bargraph(BARGRAPH_TOTAL_LEDS, BG_DIRECTION, BG_DIN, BG_CLK, BG_ADDRESS);
 #endif
 
@@ -199,10 +199,9 @@ Adafruit_NeoPixel wandLeds = Adafruit_NeoPixel(WAND_TOTAL_LEDS_NUMBER, WD_LEDS, 
 /***********************************************/
 #include "IndicatorEngine.h"
 #include "RodEngine.h"
-#include "WandVentEngine.h"
 // Wand leds objects definition
 FiringRod firingRod(wandLeds, WAND_LED_TIP_1ST, WAND_LED_TIP_LAST);
-WandVent wandVent(wandLeds, WAND_LED_1ST_VENT, WAND_LED_LAST_VENT);
+Vent wandVent(wandLeds, WAND_LED_1ST_VENT, WAND_LED_LAST_VENT);
 Indicator slowBlowIndicator(wandLeds, WAND_LED_SLOWBLOW);
 Indicator topYellowIndicator(wandLeds, WAND_LED_TOP_YELLOW);
 Indicator topWhiteIndicator(wandLeds, WAND_LED_TOP_WHITE);
@@ -227,18 +226,14 @@ const bool VOL_POT = true; // (0=false, 1 = true) activate the volume potentiome
 const bool VOL_POT = false;
 #define VOL_POT_PIN 0
 #endif
-#ifdef DFP_PRO
-#include <DFRobot_DF1201S.h>
-Player_DFPlayerPro player(VOLUME_MAX, volume, HW_RX, HW_TX, VOL_POT_PIN, VOL_POT); // define player with (min, max ,volume, MCU RX pin, MCU TX pin)
-const uint16_t PLAYER_BAUDRATE = 115200;                                           // Native baudrate is 115200 for this player.
-#elif defined(DFP_MINI)
+#ifdef DFP_MINI
 #include <DFRobotDFPlayerMini.h>
-Player_DFPlayerMini player(VOLUME_MAX, VOLUME_START, HW_RX, HW_TX, VOL_POT_PIN, VOL_POT); // define player with (min, max ,volume, MCU RX pin, MCU TX pin)
-const uint16_t PLAYER_BAUDRATE = 9600;                                                    // Native baudrate is 9600 for this player.
+Player_DFPlayerMini player(VOLUME_MAX, VOLUME_START, HW_RX, HW_TX, VOL_POT_PIN, VOL_POT, PLAYER_COMMAND_DELAY); // define player with (min, max ,volume, MCU RX pin, MCU TX pin)
+const uint16_t PLAYER_BAUDRATE = 9600;                                                                          // Native baudrate is 9600 for this player.
 #elif defined(DFP_MINI_FAST)
 #include <DFPlayerMini_Fast.h>
-Player_DFPlayerMini_Fast player(VOLUME_MAX, VOLUME_START, HW_RX, HW_TX, VOL_POT_PIN, VOL_POT); // define player with (min, max ,volume, MCU RX pin, MCU TX pin)
-const uint16_t PLAYER_BAUDRATE = 9600;                                                         // Native baudrate is 9600 for this player.
+Player_DFPlayerMini_Fast player(VOLUME_MAX, VOLUME_START, HW_RX, HW_TX, VOL_POT_PIN, VOL_POT, PLAYER_COMMAND_DELAY); // define player with (min, max ,volume, MCU RX pin, MCU TX pin)
+const uint16_t PLAYER_BAUDRATE = 9600;                                                                               // Native baudrate is 9600 for this player.
 #endif
 /************************************/
 /* Audio board SERIAL COMMUNICATION */
@@ -275,18 +270,18 @@ Switch PBrod(ROD_BUTTON_PIN, false);
 /* SMOKER OPTION */
 #include "SmokeEngine.h"
 #ifdef SMOKE_RELAY_PIN
-Smoker smoker(SMOKE_RELAY_PIN, true);
+Smoker smoker(SMOKE_RELAY_PIN, &SMOKER_MAX_ON_TIME, &SMOKER_MIN_OFF_TIME, true);
 #endif
 #ifndef SMOKE_RELAY_PIN
-Smoker smoker(0, false);
+Smoker smoker(0, &SMOKER_MAX_ON_TIME, &SMOKER_MIN_OFF_TIME, false);
 #endif
 /* RUMBLER OPTION */
 #include "RumbleEngine.h"
 #ifdef RUMBLE_RELAY_PIN
-Rumbler rumbler(RUMBLE_RELAY_PIN, true);
+Rumbler rumbler(RUMBLE_RELAY_PIN, &RUMBLER_MAX_ON_TIME, &RUMBLER_MIN_OFF_TIME, true);
 #endif
 #ifndef RUMBLE_RELAY_PIN
-Rumbler rumbler(0, false);
+Rumbler rumbler(0, &RUMBLER_MAX_ON_TIME, &RUMBLER_MIN_OFF_TIME, false);
 #endif
 
 //////////////////////////////////////////////////////////////////////////
@@ -310,14 +305,18 @@ void setup(void)
   if (!player.begin(Serial1))
   {
     if (DEBUG)
+    {
       Serial.println("Init failed, please check the wire connection!");
+    }
   }
 #elif defined(PLAYER_SOFTSERIAL)
   SoftSerial.begin(PLAYER_BAUDRATE);
   if (!player.begin(SoftSerial))
   {
     if (DEBUG)
+    {
       Serial.println("Init failed, please check the wire connection!");
+    }
   }
 #endif
   // Enable/disable software voume control with potentiometer
@@ -338,6 +337,7 @@ void setup(void)
   wandLeds.setBrightness(255);
   wandLeds.clear();
   wandLeds.show();
+  wandVent.begin();
   slowBlowIndicator.begin();
   topWhiteIndicator.begin();
   topYellowIndicator.begin();
@@ -345,7 +345,7 @@ void setup(void)
   firingRodIndicator.begin();
 
   // setup bar graph
-  bargraph.begin();
+  bargraph.begin(BG_SEG_MAP, 28, 2);
   bargraph.clear();
   bargraph.update();
 
@@ -882,12 +882,19 @@ void getLEDsSchemeForThisState(uint8_t state)
     break;
 
   case STATE_BOOTING:
+    if (init)
+    {
+      frontOrangeIndicator.clear();
+      topWhiteIndicator.clear();
+      firingRodIndicator.clear();
+      topYellowIndicator.clear();
+      wandVent.clear();
+    }
     slowBlowIndicator.red(INDICATOR_FAST_FLASH);
     cyclotron.rampToIdleOne(3000, init);
     powercell.boot(3000, init);
     bargraph.boot(50, 50, init);
-    wandVent.boot(3000, false); // to finish shutdown sequence if boot switch was turned ON when vents are not done
-    packVent.boot(3000, false); // to finish shutdown sequence if boot switch was turned ON when vents are not done
+    packVent.boot(3000, false); // to finish shutdown sequence if boot switch was turned ON when venting are not done
     break;
 
   case STATE_IDLING_UNLOADED:
@@ -895,10 +902,12 @@ void getLEDsSchemeForThisState(uint8_t state)
     {
       frontOrangeIndicator.clear();
       topWhiteIndicator.clear();
+      firingRodIndicator.clear();
+      topYellowIndicator.clear();
       wandVent.clear();
       packVent.clear();
     }
-    slowBlowIndicator.red();
+    slowBlowIndicator.red(0);
     cyclotron.rampToIdleOne(0, false); // just idling, no ramping
     powercell.rampToIdleOne(0, false); // just idling, no ramping
     bargraph.idleOne(50);
@@ -907,39 +916,49 @@ void getLEDsSchemeForThisState(uint8_t state)
   case STATE_IDLING_CHARGED:
     if (init)
     {
-      wandVent.clear();
+      firingRodIndicator.clear();
+      topYellowIndicator.clear();
       packVent.clear();
     }
-    frontOrangeIndicator.orange();
-    topWhiteIndicator.white();
+    frontOrangeIndicator.orange(0);
+    topWhiteIndicator.white(0);
+    slowBlowIndicator.red(0);
     cyclotron.rampToIdleTwo(0, false); // just idling, no ramping
     powercell.rampToIdleTwo(0, false); // just idling, no ramping
     bargraph.idleTwo(70);
+    wandVent.rampToCoolBlue(0, false); // no ramping, just set to cool blue
     break;
 
   case STATE_CHARGING:
     if (init)
     {
-      wandVent.clear();
+      firingRodIndicator.clear();
+      topYellowIndicator.clear();
+      frontOrangeIndicator.clear();
       packVent.clear();
     }
     topWhiteIndicator.white(INDICATOR_FAST_FLASH);
+    slowBlowIndicator.red(0);
     powercell.rampToIdleTwo(2500, init);
     cyclotron.rampToIdleTwo(2500, init);
     bargraph.idleOne(50);
+    wandVent.rampToCoolBlue(2500, init);
     break;
 
   case STATE_UNLOADING:
     if (init)
     {
+      firingRodIndicator.clear();
+      topYellowIndicator.clear();
       frontOrangeIndicator.clear();
-      wandVent.clear();
       packVent.clear();
     }
     topWhiteIndicator.white(INDICATOR_FAST_FLASH);
+    slowBlowIndicator.red(0);
     powercell.rampToIdleOne(2500, init);
     cyclotron.rampToIdleOne(2500, init);
     bargraph.idleTwo(70);
+    wandVent.fadeOut(2500, init);
     break;
 
   case STATE_FIRING_RAMP:
@@ -947,11 +966,14 @@ void getLEDsSchemeForThisState(uint8_t state)
     {
       topYellowIndicator.clear();
     }
+    topWhiteIndicator.white(0);
+    firingRodIndicator.yellow(0);
+    frontOrangeIndicator.orange(0);
+    slowBlowIndicator.red(0);
     cyclotron.rampToFiring(5000, init);
     powercell.rampToFiring(5000, init);
     bargraph.firing(50);
     packVent.warming(20000, init);
-    wandVent.warming(20000, init);
     firingRod.fireStrobe(20);
     break;
 
@@ -960,21 +982,27 @@ void getLEDsSchemeForThisState(uint8_t state)
     {
       topYellowIndicator.yellow(INDICATOR_MEDIUM_FLASH);
     }
+    topWhiteIndicator.white(0);
+    firingRodIndicator.yellow(0);
+    frontOrangeIndicator.orange(0);
+    slowBlowIndicator.red(0);
     cyclotron.rampToFiring(5000, false); // already initialized in STATE_FIRING_RAMP
     powercell.rampToFiring(5000, false); // already initialized in STATE_FIRING_RAMP
     bargraph.firing(50);
     packVent.warming(20000, false); // already initialized in STATE_FIRING_RAMP
-    wandVent.warming(20000, false); // already initialized in STATE_FIRING_RAMP
     firingRod.fireStrobe(20);
     break;
 
   case STATE_FIRING_OVERHEAT:
-    topYellowIndicator.red(INDICATOR_FAST_FLASH);
+    topYellowIndicator.red(INDICATOR_FAST_FLASH); // keep flashing from same pace as previous stage
+    topWhiteIndicator.white(0);
+    firingRodIndicator.yellow(0);
+    frontOrangeIndicator.orange(0);
+    slowBlowIndicator.red(0);
     cyclotron.rampToFiring(5000, false); // Sequence initialized in STATE_FIRING_RAMP
     powercell.rampToFiring(5000, false); // Sequence initialized in STATE_FIRING_RAMP
     bargraph.firing(50);
     packVent.warming(15000, false); // Sequence initialized in STATE_FIRING_RAMP
-    wandVent.warming(15000, false); // Sequence initialized in STATE_FIRING_RAMP
     firingRod.fireStrobe(20);
     break;
 
@@ -982,41 +1010,120 @@ void getLEDsSchemeForThisState(uint8_t state)
     if (init)
     {
       topYellowIndicator.clear();
-      firingRod.clear();
+      firingRodIndicator.clear();
     }
+    topWhiteIndicator.white(0);
     frontOrangeIndicator.orange(INDICATOR_MEDIUM_FLASH);
+    slowBlowIndicator.red(0);
+    firingRod.tail(1500);
     powercell.rampToIdleTwo(2000, init);
     cyclotron.rampToIdleTwo(2000, init);
     bargraph.idleTwo(70);
-    wandVent.cooling(2000, init);
     packVent.cooling(2000, init);
     break;
 
   case STATE_OVERHEATED:
     if (init)
     {
-      topYellowIndicator.clear();
-      firingRod.clear();
+      firingRodIndicator.clear();
     }
     frontOrangeIndicator.orange(INDICATOR_MEDIUM_FLASH);
     topYellowIndicator.red(INDICATOR_FAST_FLASH);
+    slowBlowIndicator.red(0);
+    firingRod.tail(1500);
     powercell.rampToIdleTwo(5000, init);
     cyclotron.rampToIdleTwo(5000, init);
     bargraph.idleTwo(70);
-    wandVent.cooling(5000, init);
     packVent.cooling(5000, init);
     break;
 
   case STATE_SHUTTING_DOWN:
+    if (init)
+    {
+      topWhiteIndicator.clear();
+      topYellowIndicator.clear();
+      firingRodIndicator.clear();
+      frontOrangeIndicator.clear();
+      wandVent.clear();
+    }
     slowBlowIndicator.red(INDICATOR_FAST_FLASH);
     powercell.shuttingDown(3000, init);
     cyclotron.rampToPoweredDown(3000, init);
     bargraph.shuttingDown(50, init);
-    wandVent.shutdown(3000, init);
     packVent.shutdown(3000, init);
     break;
   }
 }
+
+/*void templateLightsScheme(uint8_t state, bool init)
+{
+  switch (state)
+  {
+  case STATE_PWD_DOWN:
+if (init)
+    {
+    }
+    break;
+  case STATE_BOOTING:
+if (init)
+    {
+    }
+    break;
+  case STATE_IDLING_UNLOADED:
+if (init)
+    {
+    }
+    break;
+  case STATE_IDLING_CHARGED:
+    if (init)
+    {
+    }
+    break;
+  case STATE_CHARGING:
+if (init)
+    {
+    }
+    break;
+  case STATE_UNLOADING:
+if (init)
+    {
+    }
+    break;
+  case STATE_FIRING_RAMP:
+if (init)
+    {
+    }
+    break;
+  case STATE_FIRING_MAX:
+if (init)
+    {
+    }
+    break;
+
+  case STATE_FIRING_OVERHEAT:
+    if (init)
+    {
+    }
+    break;
+  case STATE_TAIL:
+    if (init)
+    {
+    }
+    break;
+  case STATE_OVERHEATED:
+    if (init)
+    {
+    }
+
+    break;
+  case STATE_SHUTTING_DOWN:
+    if (init)
+    {
+    }
+  }
+}
+ */
+
 //  END of animations functions in pack states
 ////////////////////////////////////////////////
 

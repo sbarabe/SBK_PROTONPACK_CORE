@@ -20,14 +20,13 @@
 #define CYCLOTRONENGINE_H
 
 #include <Arduino.h>
-#include "SBK_CONFIG.h"
 #include <Adafruit_NeoPixel.h>
 
 class Cyclotron_GB1_GB2
 {
 public:
     Cyclotron_GB1_GB2(Adafruit_NeoPixel &strip, bool direction, uint8_t start1, uint8_t end1, uint8_t start2, uint8_t end2, uint8_t start3, uint8_t end3, uint8_t start4, uint8_t end4);
-
+    ~Cyclotron_GB1_GB2();
     void begin();
     void clear();
     void update();
@@ -49,7 +48,7 @@ private:
     void _cellClear(uint8_t start, uint8_t end);
     void _rampCyc(int16_t rampTime, bool init, int16_t tg_updateSp, int16_t tg_fadeSp, int16_t tg_maxBri, int16_t tg_flashDur, int16_t tg_offset);
     void _idleCyc(int16_t updateSp, int16_t fadeSp, int16_t maxBri, int16_t flashDur, int16_t offset);
-    uint16_t _ramp_parameter( int16_t param, int16_t ini,int16_t tg, int16_t incr);
+    uint16_t _ramp_parameter(int16_t param, int16_t ini, int16_t tg, int16_t incr);
     Adafruit_NeoPixel &_strip;
     bool _direction;
     unsigned long _prevTime;
@@ -62,7 +61,7 @@ private:
     uint8_t _start4;
     uint8_t _end4;
     uint8_t _numLeds;
-    uint8_t _ledState[CYC_NUMLEDS][3];
+    uint8_t **_ledState;
     int16_t _cycUpdateSp;
     int16_t _cycFadeSp;
     int16_t _cycBrightness;
@@ -88,7 +87,7 @@ class Cyclotron_AF_FE
 {
 public:
     Cyclotron_AF_FE(Adafruit_NeoPixel &strip, bool direction, uint8_t start, uint8_t end);
-
+    ~Cyclotron_AF_FE();
     void begin();
     void clear();
     void update();
@@ -103,7 +102,7 @@ private:
     void _setColor(uint16_t pixel, uint8_t red, uint8_t green, uint8_t blue);
     void _rotation();
     void _ramp(uint16_t rampTime, bool init, int16_t tg_updateSp);
-    int16_t _ramp_parameter( int16_t param, int16_t ini,int16_t tg, int16_t incr);
+    int16_t _ramp_parameter(int16_t param, int16_t ini, int16_t tg, int16_t incr);
     void _idle(uint16_t updateSp);
 
     Adafruit_NeoPixel &_strip;
@@ -112,7 +111,7 @@ private:
     uint8_t _start;
     uint8_t _end;
     uint8_t _numLeds;
-    uint8_t _ledState[CYC_NUMLEDS][3];
+    uint8_t **_ledState;
     uint16_t _cycUpdateSp;
     int16_t _cycBrightness;
     int16_t _cycTrail;

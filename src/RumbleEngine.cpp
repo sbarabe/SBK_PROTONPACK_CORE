@@ -18,7 +18,13 @@
 
 #include "RumbleEngine.h"
 
-Rumbler::Rumbler(uint8_t pin, bool exist) : _pin(pin), _exist(exist)
+Rumbler::Rumbler(uint8_t pin,
+                 const uint32_t *maxOnTime,
+                 const uint32_t *minOffTime,
+                 bool exist) : _pin(pin),
+                               _ptr_MAX_ON_TIME(maxOnTime),
+                               _ptr_MIN_OFF_TIME(minOffTime),
+                               _exist(exist)
 {
     _prevStart = 0;
     _prevUpdate = 0;
@@ -50,7 +56,7 @@ void Rumbler::update()
                 rumbleOFF();
             }
 
-            if (millis() - _prevStart >= RUMBLER_MAX_ON_TIME)
+            if (millis() - _prevStart >= *_ptr_MAX_ON_TIME)
             {
                 _burstDuration = 0;
                 rumbleOFF();
@@ -75,7 +81,7 @@ void Rumbler::rumbleON()
 {
     if (_exist)
     {
-        if (!_state && ((millis() - _prevStop) >= RUMBLER_MIN_OFF_TIME))
+        if (!_state && ((millis() - _prevStop) >= *_ptr_MIN_OFF_TIME))
         {
             digitalWrite(_pin, HIGH);
             _prevStart = millis();

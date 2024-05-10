@@ -19,12 +19,15 @@
 #ifndef RUMBLEENGINE_H
 #define RUMBLEENGINE_H
 
-#include "SBK_CONFIG.h"
+#include "Arduino.h"
 
 class Rumbler
 {
 public:
-    Rumbler(uint8_t pin, bool exist);
+    Rumbler(uint8_t pin,
+            const uint32_t *maxOnTime,
+            const uint32_t *minOffTime,
+            bool exist);
     void begin();
     void update();
     void startBurst(uint16_t duration);
@@ -40,6 +43,8 @@ private:
     unsigned long _prevStop;
     unsigned long _prevUpdate;
     uint16_t _burstDuration;
+    const uint32_t *_ptr_MAX_ON_TIME;
+    const uint32_t *_ptr_MIN_OFF_TIME;
 };
 
 #endif

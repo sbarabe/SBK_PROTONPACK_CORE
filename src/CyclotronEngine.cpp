@@ -62,6 +62,11 @@ Cyclotron_GB1_GB2::Cyclotron_GB1_GB2(Adafruit_NeoPixel &strip, bool direction,
       _start4(start4), _end4(end4)
 {
     _numLeds = (_end4 - _start1 + 1);
+    _ledState = new uint8_t *[_numLeds];
+    for (uint8_t i = 0; i < _numLeds; ++i)
+    {
+        _ledState[i] = new uint8_t[3];
+    }
     _prevTime = 0;
     // initial sequence variables
     _cycUpdateSp = GB12_PWD_UPDATE_SP;
@@ -83,6 +88,15 @@ Cyclotron_GB1_GB2::Cyclotron_GB1_GB2(Adafruit_NeoPixel &strip, bool direction,
     _prevBrightnessTime = 0;
     _prevFlasDurTime = 0;
     _prevOffsetTime = 0;
+}
+
+Cyclotron_GB1_GB2::~Cyclotron_GB1_GB2()
+{
+    for (int i = 0; i < _numLeds; ++i)
+    {
+        delete[] _ledState[i]; // Free memory for each row
+    }
+    delete[] _ledState;
 }
 
 void Cyclotron_GB1_GB2::begin() { clear(); }
@@ -514,6 +528,11 @@ Cyclotron_AF_FE::Cyclotron_AF_FE(Adafruit_NeoPixel &strip, bool direction, uint8
     : _strip(strip), _direction(direction), _start(start), _end(end)
 {
     _numLeds = (_end - _start + 1);
+    _ledState = new uint8_t *[_numLeds];
+    for (uint8_t i = 0; i < _numLeds; ++i)
+    {
+        _ledState[i] = new uint8_t[3];
+    }
     _prevTime = 0;
     _cycPosTracker = 0;
     // initial sequence variables
@@ -527,6 +546,15 @@ Cyclotron_AF_FE::Cyclotron_AF_FE(Adafruit_NeoPixel &strip, bool direction, uint8
     _prevFadeTime = 0;
     _prevBrightnessTime = 0;
     _prevOffsetTime = 0;
+}
+
+Cyclotron_AF_FE::~Cyclotron_AF_FE()
+{
+    for (int i = 0; i < _numLeds; ++i)
+    {
+        delete[] _ledState[i]; // Free memory for each row
+    }
+    delete[] _ledState;
 }
 
 void Cyclotron_AF_FE::begin() { clear(); }

@@ -20,7 +20,6 @@
 #define BARGRAPHENGINE_H
 
 #include <Arduino.h>
-#include "SBK_CONFIG.h"
 #include <LedControl.h>
 #include <SPI.h>
 #include <HT16K33.h>
@@ -47,15 +46,15 @@ private:
     int8_t _runningLedTracker;
     bool _reverseSeqTracker;
     int8_t _fireSeqTracker;
-    bool bootState;
-};
+    bool _bootState;
+    };
 
 
 class HT16K33Driver : public BarGraphAnimation
 {
 public:
     HT16K33Driver(uint8_t numLeds, bool direction, uint8_t dataPin, uint8_t clockPin, uint8_t address);
-    void begin();
+    void begin(const uint8_t segMap[][2], uint8_t rows,uint8_t cols);
     void update();
 
 private:
@@ -67,6 +66,7 @@ private:
     uint8_t _dataPin;
     uint8_t _address;
     HT16K33 _driver;
+    uint8_t _segMap[28][2];
 };
 
 
@@ -74,7 +74,7 @@ class MAX72xxDriver : public BarGraphAnimation
 {
 public:
     MAX72xxDriver(uint8_t numLeds, bool direction, uint8_t dataPin, uint8_t clockPin, uint8_t loadPin);
-    void begin();
+    void begin(const uint8_t segMap[][2], uint8_t rows,uint8_t cols);
     void update();
 
 private:
@@ -86,6 +86,7 @@ private:
     uint8_t _clockPin;
     uint8_t _dataPin;
     LedControl _driver;
+    uint8_t _segMap[28][2];
 };
 
 #endif

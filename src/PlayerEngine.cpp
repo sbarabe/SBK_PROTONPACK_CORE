@@ -24,8 +24,8 @@
 /*       (with DFPlayerMini_Fast.h library)       */
 /////////////////////////////////////////////////////
 
-Player_DFPlayerMini_Fast::Player_DFPlayerMini_Fast(const uint8_t max, uint8_t volume, uint8_t RX_pin, uint8_t TX_pin, uint8_t pot_pin, bool vol_pot_exist)
-    : _VOLUME_MAX(min(30, max)), _volume(volume), _RX_pin(RX_pin), _TX_pin(TX_pin), _pot_pin(pot_pin), _volPotActive(vol_pot_exist)
+Player_DFPlayerMini_Fast::Player_DFPlayerMini_Fast(const uint8_t max, uint8_t volume, uint8_t RX_pin, uint8_t TX_pin, uint8_t pot_pin, bool vol_pot_exist,const uint8_t commandDelay)
+    : _VOLUME_MAX(min(30, max)), _volume(volume), _RX_pin(RX_pin), _TX_pin(TX_pin), _pot_pin(pot_pin), _volPotActive(vol_pot_exist), _COMMAND_DELAY(commandDelay)
 {
     _startTime = 0;
     _startTimePrev = 0;
@@ -38,19 +38,19 @@ bool Player_DFPlayerMini_Fast::begin(Stream &s)
 {
     if (_player.begin(s, false, 50))
     {
-        delay(PLAYER_COMMAND_DELAY);
+        delay(_COMMAND_DELAY);
         setVol(_volume);
-        delay(PLAYER_COMMAND_DELAY);
+        delay(_COMMAND_DELAY);
         _player.playbackSource(2);
-        delay(PLAYER_COMMAND_DELAY);
+        delay(_COMMAND_DELAY);
         _player.EQSelect(1);
-        delay(PLAYER_COMMAND_DELAY);
+        delay(_COMMAND_DELAY);
         _player.stop();
-        delay(PLAYER_COMMAND_DELAY);
+        delay(_COMMAND_DELAY);
         _player.startDAC();
-        delay(PLAYER_COMMAND_DELAY);
+        delay(_COMMAND_DELAY);
         _player.stopRepeat();
-        delay(PLAYER_COMMAND_DELAY);
+        delay(_COMMAND_DELAY);
         return true;
     }
     else
@@ -80,10 +80,6 @@ uint8_t Player_DFPlayerMini_Fast::setVolWithPot()
             {
                 potValue = analogRead(_pot_pin);
                 newVolume = (uint8_t)map(potValue, 10, 1000, 0, _VOLUME_MAX);
-            }
-            if (DEBUG)
-            {
-                Serial.print(potValue), Serial.print("  "), Serial.print(_volume), Serial.print("  "), Serial.println(newVolume);
             }
         }
         if (newVolume != _volume)
@@ -187,8 +183,8 @@ void Player_DFPlayerMini_Fast::setVol(uint8_t volume)
 /*             (with DFRobot library)              */
 /////////////////////////////////////////////////////
 
-Player_DFPlayerMini::Player_DFPlayerMini(const uint8_t max, uint8_t volume, uint8_t RX_pin, uint8_t TX_pin, uint8_t pot_pin, bool vol_pot_exist)
-    : _VOLUME_MAX(min(30, max)), _volume(volume), _RX_pin(RX_pin), _TX_pin(TX_pin), _pot_pin(pot_pin), _volPotActive(vol_pot_exist)
+Player_DFPlayerMini::Player_DFPlayerMini(const uint8_t max, uint8_t volume, uint8_t RX_pin, uint8_t TX_pin, uint8_t pot_pin, bool vol_pot_exist,const uint8_t commandDelay)
+    : _VOLUME_MAX(min(30, max)), _volume(volume), _RX_pin(RX_pin), _TX_pin(TX_pin), _pot_pin(pot_pin), _volPotActive(vol_pot_exist), _COMMAND_DELAY(commandDelay)
 {
     _startTime = 0;
     _startTimePrev = 0;
@@ -201,17 +197,17 @@ bool Player_DFPlayerMini::begin(Stream &s)
 {
     if (_player.begin(s, false, true))
     {
-        delay(PLAYER_COMMAND_DELAY);
+        delay(_COMMAND_DELAY);
         _player.outputDevice(DFPLAYER_DEVICE_SD);
-        delay(PLAYER_COMMAND_DELAY);
+        delay(_COMMAND_DELAY);
         _player.EQ(DFPLAYER_EQ_POP);
-        delay(PLAYER_COMMAND_DELAY);
+        delay(_COMMAND_DELAY);
         _player.setTimeOut(50);
-        delay(PLAYER_COMMAND_DELAY);
+        delay(_COMMAND_DELAY);
         _player.enableDAC();
-        delay(PLAYER_COMMAND_DELAY);
+        delay(_COMMAND_DELAY);
         _player.disableLoop();
-        delay(PLAYER_COMMAND_DELAY);
+        delay(_COMMAND_DELAY);
         setVol(_volume);
         return true;
     }
@@ -242,10 +238,6 @@ uint8_t Player_DFPlayerMini::setVolWithPot()
             {
                 potValue = analogRead(_pot_pin);
                 newVolume = (uint8_t)map(potValue, 10, 1000, 0, _VOLUME_MAX);
-            }
-            if (DEBUG)
-            {
-                Serial.print(potValue), Serial.print("  "), Serial.print(_volume), Serial.print("  "), Serial.println(newVolume);
             }
         }
         if (newVolume != _volume)
@@ -342,132 +334,3 @@ void Player_DFPlayerMini::setVol(uint8_t volume)
     constrain(_volume, 0, _VOLUME_MAX);
     _player.volume(_volume);
 }
-
-/////////////////////////////////////////////////////
-/*                                                 */
-/************* DFPlayer Pro section ****************/
-/*                                                 */
-/////////////////////////////////////////////////////
-
-// 
-
-/* 
-Player_DFPlayerPro::Player_DFPlayerPro(const uint8_t max, uint8_t volume, uint8_t RX_pin, uint8_t TX_pin)
-    : _VOLUME_MAX(min(30, max)), _volume(volume), _RX_pin(RX_pin), _TX_pin(TX_pin)
-{
-    _startTime = 0;
-    _startTimePrev = 0;
-    _prevVolume = _volume;
-    playing = false;
-    _TrackDuration = 0;
-    // Audio delay when calling a play file number or play specific file command.
-    // Calling the play command prior to file ending reduce the clipping sound when switching files.
-    // May not be needed depending on the player module.
-    // 30ms for DFPlayer PRO with Arduino Nano Every board and WAV files, this seems to be the right value...
-    _AUDIO_ADVANCE = 30; // milliseconds
-}
-
-bool Player_DFPlayerPro::begin(Stream &s)
-{
-    if (_player.begin(s))
-    {
-        _player.setPrompt(false);
-        _player.setVol(_volume);
-        _player.switchFunction(_player.MUSIC);
-        _player.enableAMP();
-        _player.setLED(false);
-        _player.setPlayMode(_player.SINGLE); // set cylce mode to play a single file
-        // Serial.println("Audio player initialised");
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-bool Player_DFPlayerPro::isPlaying()
-{
-    if ((millis() - _startTime) < (_TrackDuration - _AUDIO_ADVANCE))
-    {
-        if (!playing)
-        {
-            playing = true;
-            // Serial.println("playing start !");
-        }
-    }
-    else
-    {
-        if (playing)
-        {
-            playing = false;
-            // Serial.println("playing stop !");
-        }
-    }
-    return playing;
-}
-
-void Player_DFPlayerPro::setThemesPlaymode()
-{
-
-    _player.setPlayMode(_player.FOLDER);
-    _player.playSpecFile("/01/");
-    //_TrackDuration = 1000 * _player.getTotalTime();
-}
-
-void Player_DFPlayerPro::setSinglePlaymode()
-{
-    _player.setPlayMode(_player.SINGLE);
-}
-
-void Player_DFPlayerPro::playSpecFile(String str)
-{
-    _player.playSpecFile(str);
-    playing = true;
-}
-
-
-void Player_DFPlayerPro::playFileNum(int16_t track_num)
-{
-    _player.playFileNum(track_num);
-    _startTime = millis();
-    _TrackDuration = 1000 * _player.getTotalTime();
-    playing = true;
-
-    // Serial.print("Track number = "), Serial.print(track_num);
-    // Serial.print("  Track time = "), Serial.print(_TrackDuration);
-    // Serial.print("   Track start time = "), Serial.println(_startTime);
-
-}
-
-
-void Player_DFPlayerPro::playFileNum(int16_t track_num, uint16_t track_length)
-{
-    _player.playFileNum(track_num);
-    _startTime = millis();
-    _TrackDuration = track_length;
-   
-}
-
-void Player_DFPlayerPro::pause()
-{
-    _player.pause();
-}
-
-void Player_DFPlayerPro::next()
-{
-    _player.next();
-    _TrackDuration = (1000 * _player.getTotalTime());
-}
-
-void Player_DFPlayerPro::setVol(uint8_t volume)
-{
-    _volume = volume;
-    constrain(_volume, 0, _VOLUME_MAX);
-    _player.setVol(_volume);
-}
-
-void Player_DFPlayerPro::setCyclingTrackPlaymode()
-{
-    _player.setPlayMode(_player.SINGLECYCLE);
-} */

@@ -22,13 +22,15 @@ Indicator::Indicator(Adafruit_NeoPixel &strip, uint8_t pixel)
     : _strip(strip), _pixel(pixel)
 {
     _prevTime = 0;
+    _flashingState = false;
+    _pulse = false;
 }
 
 void Indicator::begin() { clear(); }
 
 void Indicator::setColor(uint8_t red, uint8_t green, uint8_t blue)
 {
-    _strip.setPixelColor(_pixel, red, green, blue);
+    _strip.setPixelColor(_pixel, _strip.gamma8(red), _strip.gamma8(green), _strip.gamma8(blue));
 }
 
 void Indicator::show()
@@ -41,122 +43,187 @@ void Indicator::clear()
     setColor(0, 0, 0);
 }
 
-void Indicator::white()
-{
-    setColor(100, 100, 100);
-}
-
 void Indicator::white(uint16_t updateSp) // flashing
 {
-    static bool flashState = false;
-    if ((millis() - _prevTime) >= updateSp)
+  if (updateSp > 0)
     {
-        _prevTime += updateSp;
-        if (flashState == false)
+        if (!_flashingState)
         {
-            white();
-            flashState = true;
+            _pulse = false;
+            _flashingState = true;
         }
-        else
+        if ((millis() - _prevTime) >= updateSp)
         {
-            clear();
-            flashState = false;
+            _prevTime = millis();
+            if (_pulse == true)
+            {
+            _white();
+            _pulse = false;
+            }
+            else
+            {
+                clear();
+                _pulse = true;
+            }
         }
     }
-}
-
-void Indicator::red()
-{
-    setColor(150, 0, 0);
+    else
+    {
+        _white();
+        _flashingState = 0;
+    }
 }
 
 void Indicator::red(uint16_t updateSp) // flashing
 {
-    static bool flashState = false;
-    if ((millis() - _prevTime) >= updateSp)
+  if (updateSp > 0)
     {
-        _prevTime += updateSp;
-        if (flashState == false)
+        if (!_flashingState)
         {
-            red();
-            flashState = true;
+            _pulse = false;
+            _flashingState = true;
         }
-        else
+        if ((millis() - _prevTime) >= updateSp)
         {
-            clear();
-            flashState = false;
+            _prevTime = millis();
+            if (_pulse == true)
+            {
+            _red();
+            _pulse = false;
+            }
+            else
+            {
+                clear();
+                _pulse = true;
+            }
         }
     }
-}
-
-void Indicator::yellow()
-{
-    setColor(0, 125, 125);
+    else
+    {
+        _red();
+        _flashingState = 0;
+    }
 }
 
 void Indicator::yellow(uint16_t updateSp) // flashing
 {
-    static bool flashState = false;
-    if ((millis() - _prevTime) >= updateSp)
+   if (updateSp > 0)
     {
-        _prevTime += updateSp;
-        if (flashState == false)
+        if (!_flashingState)
         {
-            yellow();
-            flashState = true;
+            _pulse = false;
+            _flashingState = true;
         }
-        else
+        if ((millis() - _prevTime) >= updateSp)
         {
-            clear();
-            flashState = false;
+            _prevTime = millis();
+            if (_pulse == true)
+            {
+            _yellow();
+             _pulse = false;
+            }
+            else
+            {
+                clear();
+                _pulse = true;
+            }
         }
     }
-}
-
-void Indicator::green()
-{
-    setColor(0, 150, 0);
+    else
+    {
+        _yellow();
+        _flashingState = 0;
+    }
 }
 
 void Indicator::green(uint16_t updateSp) // flashing
 {
-    static bool flashState = false;
-    if ((millis() - _prevTime) >= updateSp)
+    if (updateSp > 0)
     {
-        _prevTime += updateSp;
-        if (flashState == false)
+        if (!_flashingState)
         {
-            green();
-            flashState = true;
+            _pulse = false;
+            _flashingState = true;
         }
-        else
+        if ((millis() - _prevTime) >= updateSp)
         {
-            clear();
-            flashState = false;
+            _prevTime = millis();
+            if (_pulse == true)
+            {
+                _green();
+                _pulse = false;
+            }
+            else
+            {
+                clear();
+                _pulse = true;
+            }
         }
     }
-}
-
-void Indicator::orange()
-{
-    setColor(255, 127, 0);
+    else
+    {
+        _green();
+        _flashingState = 0;
+    }
 }
 
 void Indicator::orange(uint16_t updateSp) // flashing
 {
-    static bool flashState = false;
-    if ((millis() - _prevTime) >= updateSp)
+    if (updateSp > 0)
     {
-        _prevTime += updateSp;
-        if (flashState == false)
+        if (!_flashingState)
         {
-            orange();
-            flashState = true;
+            _pulse = false;
+            _flashingState = true;
         }
-        else
+        if ((millis() - _prevTime) >= updateSp)
         {
-            clear();
-            flashState = false;
+            _prevTime = millis();
+            if (_pulse == true)
+            {
+                _orange();
+                _pulse = false;
+            }
+            else
+            {
+                clear();
+                _pulse = true;
+            }
         }
     }
+    else
+    {
+        _orange();
+        _flashingState = 0;
+    }
+}
+
+void Indicator::_white()
+{
+    setColor(150, 150, 150);
+}
+
+void Indicator::_red()
+{
+    // setColor( _strip.gamma8(201),  _strip.gamma8(0),  _strip.gamma8(0));
+    setColor(255, 0, 0);
+}
+
+void Indicator::_yellow()
+{
+    // setColor( _strip.gamma8(255),  _strip.gamma8(255),  _strip.gamma8(90));
+    setColor(255, 200, 0);
+}
+
+void Indicator::_green()
+{
+
+    // setColor( _strip.gamma8(173),  _strip.gamma8(255),  _strip.gamma8(90));
+    setColor(173, 255, 90);
+}
+
+void Indicator::_orange()
+{
+    // setColor( _strip.gamma8(253),  _strip.gamma8(166),  _strip.gamma8(0));
+    setColor(255, 100, 0);
 }
