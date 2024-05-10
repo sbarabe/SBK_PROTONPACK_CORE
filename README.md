@@ -54,6 +54,8 @@ Depending on your project hardware, the following library and their dependencies
 
   Be careful when working/changing animations times/speed regarding your audio tracks/pact states durations. They are all gathered in the getLEDsSchemeForThisState() function after the Main Loop in the core file. CAUTION : playing with times and speeds can really mess up the animations flow. It is highly suggested taking notes of the original values and changing a few of them at the time and see the effects.
 
+
+    
   #### *** ADVANCED USERS ***
   
   If you want to change animations styles and colors, you need to go in the engines files and modified the associated functions or create new ones. Then you will have to implement them in the getLEDsSchemeForThisState() function in the core file.
@@ -67,8 +69,33 @@ Depending on your project hardware, the following library and their dependencies
 
   This code is based on objects programming, objects are defined in their *.h and *.cpp files. Objects instances are created and used in the core file SBK_PROTONPACK_CORE.ino. There is also a config file, SBK_CONFIG.h, where all basic parameters can be changed according to hardware used. This fully compartmented code helps keeping code cleaner and easier to update/maintain. This also prevent having an endless code hard to follow.
 
-  
-- ### Board tested
+- ### Compatible HARDWARE
+
+  This code is intended to be use with any PCB and MCU that fits minimum pins requirements :
+  - 5 digital inputs for the switches/buttons, with internal pull up resistor
+  - 2 digital outputs for WS2812 LEDs chains
+  - 2 pins for serial communications with the audio player (hardware or software)
+  - 2 or 3 pins for the bar graph driver : 2 for I2C (SDA/SCL), 3 pins for MAX72xx type (DATA, CLOCK, LOAD)
+  - 1 digital output for smoker (optional)
+  - 1 digital output for rumbler (optional)
+  - 1 analog input for a potentiometer to control volume by audio player : software control (optional)
+ 
+  LEDs should be WS2812 or any supported LEDs by the library.
+
+  Bar graph driver could be MAX7219/7221 SPI/serial driver or the HTHT16K33 I2C driver.
+  Bar graph could be 8 to 12 segements common cathode bar graph, or the 28 segements common cathode
+
+  Supported audio player is the DFPlayer Mini, others could be added latter uppon request.
+
+  The actual CONFIG.h file as it is should be setup to work with :
+  - MikeS11 pcb
+  - HT16K33.h with 28 segments bar graph with common cathode
+  - 1 LEDs strip for the wand : wandvent, indicators and firing jewel
+  - 1 LEDS strip for the pack : packvent, cyclotron and powercell
+  Always check the PINs definition and LEDs index to fit yours.
+  Beware that the pack vent is on pack LEDs strip, not at the start of the wand LEDs strip...
+
+- ### MCU Board tested
 
   This code has been fully tested on the following board, that doesn't mean it's the only boards working.
 
