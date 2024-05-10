@@ -23,22 +23,31 @@ Depending on your project hardware, the following library and their dependencies
 ## Features
 
 Features included:
- *    - DFPlayer mini sound board.
- *    - Wand BAR GRAPH : up to 28 segments (configurable) controlled by MAX72xx or HT16K33 drivers
- *    - Vents, indicators, powercell and cylcotron are WS2812 led type: there is one defined chain
- *      for the wand (wandLeds), and one chain for the pack (packLeds).
- *    - WS2812 LEDs positions can be set in their header section.
- *    - LEDs animations are defined in object functions. Class objects and functions are in separated
- *      files to keep the main sketch as short as possible.
- *    - There is an option for volume potentiometer that uses software volume control with the audio player :
- *      you can ignore it : the volume will be the one declare in the AUDIO PLAYER configuration section.
- *    - There is the following regular switches and buttons :
- *         Startup switch :     Power on/shutting down the pack by calling starting up / shutting down sequence.
- *         Charging switch :    Safety ON means non shooting, Safety OFF means shooting possible
- *         Theme switch :       for playing themes song instead of the regular pack function.
- *         Fire button :        It does what it says... It also skips to next themes in themes playing mode.
- *         Fire2 button :       Same as fire button but play previous themes in themes playing mode.
- *    - Other options : smoke module and rumble module
+ *    DFPlayer mini sound board.
+ *    Wand BAR GRAPH : up to 28 segments (configurable) controlled by MAX72xx or HT16K33 drivers
+ *    Pack Lights (WS2812) :
+         *  Powercell
+         *  Cyclotron : GB1/GB2 or Frozen Empire style
+         *  Vent  
+ *    Wand Lights (WS2812):
+         *    Vent
+         *    Slowblow indicator
+         *    Top white indicator
+         *    Top Yellow indicator
+         *    Front orange indicator
+         *    Firing Rod Indicators
+ *    All LED pixel number and index configurable.       
+ *    LEDs animations are defined in object functions. Class objects and functions are in separated files to keep the main sketch as short as possible.
+ *    There is an option for volume potentiometer that uses software volume control with the audio player. If not define, the volume will be the one declare in the AUDIO PLAYER configuration section.
+ *    There is the following regular switches and buttons :
+     *  Startup switch :     Power on/shutting down the pack by calling starting up / shutting down sequence.
+     *   Charging switch :    Safety ON means non shooting, Safety OFF means shooting possible
+     *   Theme switch :       for playing themes song instead of the regular pack function.
+     *   Fire button :        It does what it says... It also skips to next themes in themes playing mode.
+     *   Fire2 button :       Same as fire button but play previous themes in themes playing mode.
+ *    Other options :
+     *   Smoke module
+   * and rumble module
 
 - ### Simple to use
 
