@@ -197,32 +197,20 @@ void Vent::rampToCoolBlue(int16_t ramp_time, bool init)
     int16_t greenIncrement = 1;
     int16_t blueIncrement = 1;
 
-    int16_t redFadeInTime = (uint32_t)ramp_time * redIncrement / redTarget;
-    int16_t greenFadeInTime = (uint32_t)ramp_time * greenIncrement / greenTarget;
-    int16_t blueFadeInTime = (uint32_t)ramp_time * blueIncrement / blueTarget;
-
-    _rampColor(&_redTracker, redFadeInTime, init, &_initRedTracker, redTarget, &_intervalRed, redIncrement, &_prevTimeRed);
-    _rampColor(&_greenTracker, greenFadeInTime, init, &_initGreenTracker, greenTarget, &_intervalGreen, greenIncrement, &_prevTimeGreen);
-    _rampColor(&_blueTracker, blueFadeInTime, init, &_initBlueTracker, blueTarget, &_intervalBlue, blueIncrement, &_prevTimeBlue);
+    _rampColor(&_redTracker, ramp_time, init, &_initRedTracker, redTarget, &_intervalRed, redIncrement, &_prevTimeRed);
+    _rampColor(&_greenTracker, ramp_time, init, &_initGreenTracker, greenTarget, &_intervalGreen, greenIncrement, &_prevTimeGreen);
+    _rampColor(&_blueTracker, ramp_time, init, &_initBlueTracker, blueTarget, &_intervalBlue, blueIncrement, &_prevTimeBlue);
 }
 
 void Vent::fadeOut(int16_t ramp_time, bool init)
 {
-    int16_t redTarget = 0;
-    int16_t greenTarget = 0;
-    int16_t blueTarget = 0;
-
     int16_t redIncrement = 1;
     int16_t greenIncrement = 1;
     int16_t blueIncrement = 1;
 
-    int16_t redFadeTime = (uint32_t)ramp_time * redIncrement / redTarget;
-    int16_t greenFadeTime = (uint32_t)ramp_time * greenIncrement / greenTarget;
-    int16_t blueFadeTime = (uint32_t)ramp_time * blueIncrement / blueTarget;
-
-    _rampColor(&_redTracker, redFadeTime, init, &_initRedTracker, redTarget, &_intervalRed, redIncrement, &_prevTimeRed);
-    _rampColor(&_greenTracker, greenFadeTime, init, &_initGreenTracker, greenTarget, &_intervalGreen, greenIncrement, &_prevTimeGreen);
-    _rampColor(&_blueTracker, blueFadeTime, init, &_initBlueTracker, blueTarget, &_intervalBlue, blueIncrement, &_prevTimeBlue);
+    _rampColor(&_redTracker, ramp_time, init, &_initRedTracker, 0, &_intervalRed, redIncrement, &_prevTimeRed);
+    _rampColor(&_greenTracker, ramp_time, init, &_initGreenTracker, 0, &_intervalGreen, greenIncrement, &_prevTimeGreen);
+    _rampColor(&_blueTracker, ramp_time, init, &_initBlueTracker, 0, &_intervalBlue, blueIncrement, &_prevTimeBlue);
 }
 
 bool Vent::_rampColor(int16_t *colorTracker, int16_t rampTime, bool init, int16_t *initTracker, int16_t tg, int16_t *interval, int16_t increment, unsigned long *prevTime)

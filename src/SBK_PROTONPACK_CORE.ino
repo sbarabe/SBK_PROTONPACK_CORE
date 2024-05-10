@@ -20,7 +20,7 @@
  *
  *    SBK_PROTONPACK_CORE
  *    <https://github.com/sbarabe/SBK_PROTONPACK_CORE>
- *    Version 2.1
+ *    Version 2.2
  *
  *    This code was first intended to be use with the SBK Kid Proton Pack
  *    <https://github.com/sbarabe/SBK-KidSizeProtonPackArduino> but the code has been extended to
@@ -959,6 +959,7 @@ void getLEDsSchemeForThisState(uint8_t state)
     cyclotron.rampToIdleOne(2500, init);
     bargraph.idleTwo(70);
     wandVent.fadeOut(2500, init);
+    firingRod.tail(1500);
     break;
 
   case STATE_FIRING_RAMP:
@@ -1051,6 +1052,7 @@ void getLEDsSchemeForThisState(uint8_t state)
     cyclotron.rampToPoweredDown(3000, init);
     bargraph.shuttingDown(50, init);
     packVent.shutdown(3000, init);
+    firingRod.tail(1500);
     break;
   }
 }
@@ -1185,8 +1187,8 @@ void checkPlayThemesMode()
     // Exit of themes playing, restart playing Pack State TRack
     if (!SWthemes.isON())
     {
-
-      playThisStateTrack(packState, TRACK_LOOPING[packState]);
+      // playThisStateTrack(packState, TRACK_LOOPING[packState]);
+      stageFlag = 0; // pack state reinitialization
       themes = false;
     }
   }
