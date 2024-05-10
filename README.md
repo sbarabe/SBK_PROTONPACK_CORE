@@ -54,7 +54,6 @@ Depending on your project hardware, the following library and their dependencies
 
   Be careful when working/changing animations times/speed regarding your audio tracks/pact states durations. They are all gathered in the getLEDsSchemeForThisState() function after the Main Loop in the core file. CAUTION : playing with times and speeds can really mess up the animations flow. It is highly suggested taking notes of the original values and changing a few of them at the time and see the effects.
 
-
     
   #### *** ADVANCED USERS ***
   
@@ -101,7 +100,12 @@ Depending on your project hardware, the following library and their dependencies
 
   - Arduino Nano
   - Arduino Nano Every
- 
+
+## Sound effects
+
+Has examples, you'll find here some sounds effects that have been remixed for this code. The actual config file uses those track numbers and lengths. Note that the exact sources of the original sound files are unknowed, so it is impossible to way if they are copyrighted, but probably are in some way. Use these sound effects examples at your own risk : https://mega.nz/folder/GZ8TFIzK#W5bunWSMubMsOIHVNrYEIA
+
+Note : the clipped files have been reduce in gain to lower distorsion on small speakers.
     
 ## Give back
 
