@@ -19,7 +19,6 @@ Depending on your project hardware, the following library and their dependencies
     - DFPlayerMine_Fast.h (https://github.com/PowerBroker2/DFPlayerMini_Fast)
 
 
-
 ## Features
 
  *    DFPlayer mini sound board.
@@ -79,9 +78,16 @@ Depending on your project hardware, the following library and their dependencies
     
 ## Give back
 
-The library is free, you don’t have to pay for anything. The author invests time and resources providing this open source code and open-source hardware, please support him with a little contribution at : paypal.me/sbarab. 
+The library is free, you don’t have to pay for anything. The author invests time and resources providing this open source code and open-source hardware, please support him with a little contribution at : [paypal.me/sbarab](https://www.paypal.com/paypalme/sbarab). 
 You could also consider using the author specific pcb board for your project, they'll be available soon.
 
+## Requests
+
+Please post a new issue if you have request for this code, like new animations. It the best way to keep track and follow requests.
+
+## Contribute
+
+You have a great idea for this project, you can fork this project and make a pull request !
 
 ## GNU Lesser General Public License
 
