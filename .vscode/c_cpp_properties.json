@@ -8,7 +8,6 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/include",
                 "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/src",
                 "C:/Users/sbara/.platformio/packages/framework-arduino-megaavr/libraries/SPI/src",
                 "C:/Users/sbara/.platformio/packages/framework-arduino-megaavr/libraries/SoftwareSerial/src",
@@ -29,7 +28,6 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/include",
                     "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/src",
                     "C:/Users/sbara/.platformio/packages/framework-arduino-megaavr/libraries/SPI/src",
                     "C:/Users/sbara/.platformio/packages/framework-arduino-megaavr/libraries/SoftwareSerial/src",
