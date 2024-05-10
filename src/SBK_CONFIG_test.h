@@ -43,19 +43,18 @@ bool const DEBUG = false;
 // Hardware Serial for serial communication with audio board
 #define HW_RX 0              // to audio board Tx pin, for Nano Every Serial1
 #define HW_TX 1              // to audio board Rx pin, for Nano Every Serial1
-#define SW_RX 11              // If Software Serial is used, to audio board Tx pin
-#define SW_TX 10              // If Software Serial is used,to audio board Rx pin
-#define PK_LEDS 2           // for pack LEDs chain
-#define BG_DIN A4             // connected to bar graph driver DataIn pin / SDA in case of I2C driver
-#define BG_CLK A5            // connected to bar graph driver Clock pin / SCL in cas of I2C driver
-#define BG_LOAD A6           // connected to bar graph driver Load pin, not used for I2C driver
-// #define BUSY_PIN 12      // Audio player BUSY pin - NOT USE IN THIS CODE
-#define WD_LEDS 3            // for wand LEDs chain
-#define ROD_BUTTON_PIN 5    // same as fire button, but plays previous theme when pressed and released in "Themes mode"
-#define FIRE_BUTTON_PIN 4   // if in Idle Two state, fires gun. Also plays next theme when pressed and released in "Themes mode"
-#define CHARGE_SWITCH_PIN 6 // Goes from Idle One state to Idle Two state : gun can be fire when in Idle two state
-#define BOOT_SWITCH_PIN 7   // Goes from power down to Idle One state, or powered down when switch off from any state
-#define THEME_SWITCH_PIN 8  // Puts the pack in music mode, playings themes one after the other. Use fire/rod buttons to switch themes.
+#define SW_RX 2              // If Software Serial is used, to audio board Tx pin
+#define SW_TX 3              // If Software Serial is used,to audio board Rx pin
+#define PK_LEDS 12            // for pack LEDs chain
+#define BG_DIN 9             // connected to bar graph driver DataIn pin / SDA in case of I2C driver
+#define BG_CLK 10            // connected to bar graph driver Clock pin / SCL in cas of I2C driver
+#define BG_LOAD 11           // connected to bar graph driver Load pin, not used for I2C driver
+#define WD_LEDS 8           // for wand LEDs chain
+#define ROD_BUTTON_PIN A7    // same as fire button, but plays previous theme when pressed and released in "Themes mode"
+#define FIRE_BUTTON_PIN A5   // if in Idle Two state, fires gun. Also plays next theme when pressed and released in "Themes mode"
+#define CHARGE_SWITCH_PIN A4 // Goes from Idle One state to Idle Two state : gun can be fire when in Idle two state
+#define BOOT_SWITCH_PIN A3   // Goes from power down to Idle One state, or powered down when switch off from any state
+#define THEME_SWITCH_PIN A2  // Puts the pack in music mode, playings themes one after the other. Use fire/rod buttons to switch themes.
 // Those pin are the REQUIRED pins for pack CORE as it's coded in this unmodified version.
 // Others pins for options are defined later in the config file : smoker, rumbler, volume potentiometer.
 
@@ -63,7 +62,7 @@ bool const DEBUG = false;
 /*          OPTION :SMOKE MACHINE            */
 /*********************************************/
 /* UNCOMMENT and DEFINE PIN if smoke module exist */
-// #define SMOKE_RELAY_PIN 9     /* signal to relays for smoke module (fan and smoke) */
+// #define SMOKE_RELAY_PIN 5     // signal to relays for smoke module (fan and smoke)
 /* DEFINE the maximum time that the smoker can be ON */
 const uint32_t SMOKER_MAX_ON_TIME = 15000; // in ms
 /* DEFINE the minimum OFF time of the smoker, ti prevent short cylcing */
@@ -75,19 +74,19 @@ const uint32_t SMOKER_MIN_OFF_TIME = 2000; // in ms
 /*          OPTION : RUMBLE MOTOR            */
 /*********************************************/
 /* UNCOMMENT and DEFINE PIN number if rumbler motor module exist */
-// #define RUMBLER_RELAY_PIN 13     /* signal to rumbler motor relay */
+// #define RUMBLER_RELAY_PIN 13     // signal to rumbler motor relay
 /* DEFINE the maximum time that the rumbler can be ON */
 const uint32_t RUMBLER_MAX_ON_TIME = 15000; // in ms
 /* DEFINE rumbler minimum OFF time to prevent short cylcing */
 const uint32_t RUMBLER_MIN_OFF_TIME = 2000; // in ms
-                                            /* Rumbler is activated, if minimum off time is respected, when the pack goes into firing */
+/* Rumbler is activated, if minimum off time is respected, when the pack goes into firing */
 
 /*********************************************/
 /*           BAR GRAPH & DRIVER(s)           */
 /*********************************************/
 /*  SELECT (uncomment) ONE DRIVER TYPE :     */
-#define BG_HT16K33 /* I2C LEDs driver like Adafruit backpack, use 2 pins : SDA, SDC */
-// #define BG_MAX72xx /* MAX7219/7221 use 3 pins serial communication : data, clock, load. */
+// #define BG_HT16K33 // I2C LEDs driver like Adafruit backpack, use 2 pins : SDA, SDC
+#define BG_MAX72xx // MAX7219/7221 use 3 pins serial communication : data, clock, load.
 /* DEFINE DRIVER I2C ADDRESS IF REQUIRED     */
 #define BG_ADDRESS 0x70 // for I2C drivers type
 /*  DEFINE the total segments number on bar graphe :     */
@@ -155,8 +154,8 @@ const bool POWERCELL_DIRECTION = FORWARD; // animation direction (FORWARD/REVERS
 /***********************************************/
 const bool CYCLOTRON_DIRECTION = FORWARD; // animation direction (FORWARD/REVERSE)
 // >>> Uncomment only one cyclotron style and define cyclotron LEDs index on the PACK chain:
-#define GB12 /* cyclotron with 4 rotating positions, could be use with ring LEDs or 4 pixels/jewels*/
-// #define AFFE /* Only available for ring LEDS */
+#define GB12 // cyclotron with 4 rotating positions, could be use with ring LEDs or 4 pixels/jewels
+             // #define AFFE // Only available for ring LEDS
 /*****************************/
 /* >>>>> GB1/GB2 style <<<<< */
 /*****************************/
@@ -175,8 +174,8 @@ const uint8_t CYC_POS4_LAST_LED = 34;
 /* >>>>> AF/FE style <<<<< */
 /***************************/
 #ifdef AFFE
-const uint8_t CYC_RING_1ST_LED = 0;   // Cyclotron first pixel index position in WS2812 pack chain
-const uint8_t CYC_RING_LAST_LED = 44; // Cyclotron last pixel index position in WS2812 pack chain
+const uint8_t CYC_RING_1ST_LED = 0;                                   // Cyclotron first pixel index position in WS2812 pack chain
+const uint8_t CYC_RING_LAST_LED = 44;                                 // Cyclotron last pixel index position in WS2812 pack chain
 #endif
 
 /*********************************************/
@@ -218,7 +217,7 @@ const uint16_t AUDIO_ADVANCE = 150;        // short advance to call the next tra
 /*     OPTION : VOL POT     */
 /****************************/
 /* UNCOMMENT and DEFINE PIN if potentiometer exists for software volume control by audio player */
-// #define VOL_POT_PIN A7    /* For software volume control with audio player*/
+// #define VOL_POT_PIN A6    // For software volume control with audio player
 /* If no pot exists, do not define it, fixed volume will be used as defined above : VOLUME_START. */
 /****************************/
 /*    PLAYER definitions    */
@@ -234,12 +233,12 @@ const uint16_t AUDIO_ADVANCE = 150;        // short advance to call the next tra
 /* root folder. They are played in the order they have been put on the flash drive, not by trackname */
 /* Also, TRACK NUMBERS FIT PACK STATES, it's part of the core program, this order should be mainntain/corrected that way */
 const int16_t BOOT_TRACK = 1;
-const int16_t UNLOADED_IDLE_TRACK = 2; // Looping track
-const int16_t CHARGED_IDLE_TRACK = 3;  // Looping track
+const int16_t UNLOADED_IDLE_TRACK = 2;  // Looping track
+const int16_t CHARGED_IDLE_TRACK = 3;   // Looping track
 const int16_t CHARGING_TRACK = 4;
 const int16_t UNLOADING_TRACK = 5;
 const int16_t FIRING_RAMP_TRACK = 6;
-const int16_t FIRING_MAX_TRACK = 7; // Looping track
+const int16_t FIRING_MAX_TRACK = 7;     // Looping track
 const int16_t FIRING_OVERHEAT_TRACK = 8;
 const int16_t TAIL_TRACK = 9;
 const int16_t TAIL_OVERHEAT_TRACK = 10;
