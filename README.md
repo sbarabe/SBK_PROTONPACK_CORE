@@ -40,14 +40,14 @@ Features included:
  *    LEDs animations are defined in object functions. Class objects and functions are in separated files to keep the main sketch as short as possible.
  *    There is an option for volume potentiometer that uses software volume control with the audio player. If not define, the volume will be the one declare in the AUDIO PLAYER configuration section.
  *    There is the following regular switches and buttons :
-          *    Startup switch :     Power on/shutting down the pack by calling starting up / shutting down sequence.
-          *    Charging switch :    Safety ON means non shooting, Safety OFF means shooting possible
-          *    Theme switch :       for playing themes song instead of the regular pack function.
-          *    Fire button :        It does what it says... It also skips to next themes in themes playing mode.
-          *    Fire2 button :       Same as fire button but play previous themes in themes playing mode.
+          -    Startup switch :     Power on/shutting down the pack by calling starting up / shutting down sequence.
+          -    Charging switch :    Safety ON means non shooting, Safety OFF means shooting possible
+         -    Theme switch :       for playing themes song instead of the regular pack function.
+          -    Fire button :        It does what it says... It also skips to next themes in themes playing mode.
+          -   Fire2 button :       Same as fire button but play previous themes in themes playing mode.
  *    Other options :
-         *    Smoke module
-          *    Rumble module
+         -    Smoke module
+         -    Rumble module
 
 - ### Simple to use
 
