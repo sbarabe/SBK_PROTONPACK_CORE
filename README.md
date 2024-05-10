@@ -3,7 +3,7 @@ Code for lights and sound effects of a Proton Pack replica or other props.
 
 ## Installation
 
-After downloading, rename folder to 'SBK_PROTONPACK_CORE' and save it into Arduino IDE sketches folder. Then open File->Sketchbook->SBK_PROTONPACK_CORE->SBK_PROTONPACK_CORE.ino.
+After downloading, rename 'src' folder to 'SBK_PROTONPACK_CORE' and copy it into Arduino IDE sketches folder. Then open File->Sketchbook->SBK_PROTONPACK_CORE->SBK_PROTONPACK_CORE.ino.
 
 ### Library
 
