@@ -10,8 +10,8 @@ After downloading, rename folder to 'SBK_PROTONPACK_CORE' and save it into Ardui
 Depending on your project hardware, the following library and their dependencies are required :
 
 - For bar graph driver :
-               - MAX71xx >>>   LedControl.h (https://github.com/wayoda/LedControl)
-               - HT16K33 >>>   HT16K33.h (https://github.com/MikeS11/ProtonPack/tree/master/Source/Libraries/ht16k33-arduino-master)
+    -  MAX71xx >>>   LedControl.h (https://github.com/wayoda/LedControl)
+    -  HT16K33 >>>   HT16K33.h (https://github.com/MikeS11/ProtonPack/tree/master/Source/Libraries/ht16k33-arduino-master)
 - For WS2812 LEDs :       Adafruit_NeoPixel.h (https://github.com/adafruit/Adafruit_NeoPixel)
 - For DFPlayer Pro (not fully tested yet) : DFRobot_DF1201S.h (https://github.com/DFRobot/DFRobot_DF1201S)
 - For DFPlayer Mini :
