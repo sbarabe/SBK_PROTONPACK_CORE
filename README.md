@@ -3,23 +3,21 @@ Code for lights and sound effects of a Proton Pack replica or other props.
 
 ## Installation
 
-After downloading, rename folder to 'SBK_PROTONPACK_CORE' and save it into Arduino IDE sketches folder. Then open File->Sketchbook->SBK_PROTONPACK_CORE->SBK_PROTONPACK.ino.
+After downloading, rename folder to 'SBK_PROTONPACK_CORE' and save it into Arduino IDE sketches folder. Then open File->Sketchbook->SBK_PROTONPACK_CORE->SBK_PROTONPACK_CORE.ino.
 
-### First Method
+### Library
 
-![image](https://user-images.githubusercontent.com/36513474/68967967-3e37f480-0803-11ea-91d9-601848c306ee.png)
+Depending on your project hardware, the following library and their dependencies are required :
 
-1. In the Arduino IDE, navigate to Sketch > Include Library > Manage Libraries
-1. Then the Library Manager will open and you will find a list of libraries that are already installed or ready for installation.
-1. Then search for Neopixel strip using the search bar.
-1. Click on the text area and then select the specific version and install it.
+    - For bar graph driver :
+                MAX71xx >>>   LedControl.h (https://github.com/wayoda/LedControl)
+                HT16K33 >>>   HT16K33.h (https://github.com/MikeS11/ProtonPack/tree/master/Source/Libraries/ht16k33-arduino-master)
+     - For WS2812 LEDs :       Adafruit_NeoPixel.h (https://github.com/adafruit/Adafruit_NeoPixel)
+     - For DFPlayer Pro (not fully tested yet) : DFRobot_DF1201S.h (https://github.com/DFRobot/DFRobot_DF1201S)
+     - For DFPlayer Mini :     DFRobotDFPlayerMini.h (https://github.com/DFRobot/DFRobotDFPlayerMini)
+                      or      DFPlayerMine_Fast.h (https://github.com/PowerBroker2/DFPlayerMini_Fast)
 
-### Second Method
 
-1. Navigate to the [Releases page](https://github.com/adafruit/Adafruit_NeoPixel/releases).
-1. Download the latest release.
-1. Extract the zip file
-1. In the Arduino IDE, navigate to Sketch > Include Library > Add .ZIP Library
 
 ## Features
 
