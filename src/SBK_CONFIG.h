@@ -91,7 +91,7 @@ const uint32_t RUMBLER_MIN_OFF_TIME = 2000; // in ms
 /* DEFINE DRIVER I2C ADDRESS IF REQUIRED     */
 #define BG_ADDRESS 0x70 // for I2C drivers type
 /*  DEFINE the total segments number on bar graphe :     */
-const uint8_t BARGRAPH_TOTAL_LEDS = 10;
+const uint8_t BARGRAPH_TOTAL_LEDS = 28;
 /*  DEFINE animation direction : */
 const bool BG_DIRECTION = FORWARD; // animation direction (FORWARD/REVERSE)
 /*  DEFINE segments mapping on bar graph driver {ROW,COL}.    */
@@ -191,13 +191,13 @@ const uint8_t WAND_TOTAL_LEDS_NUMBER = 13; // Wand vent + indicators + firing je
 // The following sections contain indexes for the leds on the chain, starting from 0.
 // You will need to update these indexes to match where things are in the chain
 // Wand vent, indicators and firing tip index in the WS2812 wand chain :
-const uint8_t WAND_LED_1ST_VENT = 0;
-const uint8_t WAND_LED_LAST_VENT = 0;
-const uint8_t WAND_LED_SLOWBLOW = 1;
+const uint8_t WAND_LED_1ST_VENT = 1;
+const uint8_t WAND_LED_LAST_VENT = 1;
+const uint8_t WAND_LED_SLOWBLOW = 0;
 const uint8_t WAND_LED_TOP_YELLOW = 2;
 const uint8_t WAND_LED_TOP_WHITE = 3;
-const uint8_t WAND_LED_FRONT_ORANGE = 4;
-const uint8_t WAND_LED_FIRINGROD_YEL = 5;
+const uint8_t WAND_LED_FRONT_ORANGE = 5;
+const uint8_t WAND_LED_FIRINGROD_YEL = 4;
 const uint8_t WAND_LED_TIP_1ST = 6;
 const uint8_t WAND_LED_TIP_LAST = 12;
 // Indicator flashing speeds

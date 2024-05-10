@@ -1,0 +1,76 @@
+//
+// !!! WARNING !!! AUTO-GENERATED FILE!
+// PLEASE DO NOT MODIFY IT AND USE "platformio.ini":
+// https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
+//
+{
+    "configurations": [
+        {
+            "name": "PlatformIO",
+            "includePath": [
+                "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/include",
+                "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/src",
+                "C:/Users/sbara/.platformio/packages/framework-arduino-megaavr/libraries/SPI/src",
+                "C:/Users/sbara/.platformio/packages/framework-arduino-megaavr/libraries/SoftwareSerial/src",
+                "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/.pio/libdeps/nano_every/ht16k33",
+                "C:/Users/sbara/.platformio/packages/framework-arduino-megaavr/libraries/Wire/src",
+                "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/.pio/libdeps/nano_every/DFPlayerMini_Fast/src",
+                "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/.pio/libdeps/nano_every/FireTimer/src",
+                "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/.pio/libdeps/nano_every/DFRobotDFPlayerMini",
+                "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/.pio/libdeps/nano_every/LedControl/src",
+                "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/.pio/libdeps/nano_every/Adafruit NeoPixel",
+                "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/.pio/libdeps/nano_every/DFRobot_DF1201S/src",
+                "C:/Users/sbara/.platformio/packages/framework-arduino-megaavr/cores/arduino/api/deprecated",
+                "C:/Users/sbara/.platformio/packages/framework-arduino-megaavr/cores/arduino",
+                "C:/Users/sbara/.platformio/packages/framework-arduino-megaavr/variants/nona4809",
+                "C:/Users/sbara/.platformio/packages/framework-arduino-megaavr/libraries/EEPROM/src",
+                ""
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/include",
+                    "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/src",
+                    "C:/Users/sbara/.platformio/packages/framework-arduino-megaavr/libraries/SPI/src",
+                    "C:/Users/sbara/.platformio/packages/framework-arduino-megaavr/libraries/SoftwareSerial/src",
+                    "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/.pio/libdeps/nano_every/ht16k33",
+                    "C:/Users/sbara/.platformio/packages/framework-arduino-megaavr/libraries/Wire/src",
+                    "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/.pio/libdeps/nano_every/DFPlayerMini_Fast/src",
+                    "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/.pio/libdeps/nano_every/FireTimer/src",
+                    "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/.pio/libdeps/nano_every/DFRobotDFPlayerMini",
+                    "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/.pio/libdeps/nano_every/LedControl/src",
+                    "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/.pio/libdeps/nano_every/Adafruit NeoPixel",
+                    "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/.pio/libdeps/nano_every/DFRobot_DF1201S/src",
+                    "C:/Users/sbara/.platformio/packages/framework-arduino-megaavr/cores/arduino/api/deprecated",
+                    "C:/Users/sbara/.platformio/packages/framework-arduino-megaavr/cores/arduino",
+                    "C:/Users/sbara/.platformio/packages/framework-arduino-megaavr/variants/nona4809",
+                    "C:/Users/sbara/.platformio/packages/framework-arduino-megaavr/libraries/EEPROM/src",
+                    ""
+                ]
+            },
+            "defines": [
+                "PLATFORMIO=60115",
+                "ARDUINO_AVR_NANO_EVERY",
+                "AVR_NANO_4809_328MODE",
+                "MILLIS_USE_TIMERB3",
+                "NO_EXTERNAL_I2C_PULLUP",
+                "F_CPU=16000000L",
+                "ARDUINO_ARCH_MEGAAVR",
+                "ARDUINO=10808",
+                "USB_VID=0x2341",
+                "USB_PID=0x0058",
+                "USB_PRODUCT=\"Arduino Nano Every\"",
+                "USB_MANUFACTURER=\"Arduino\"",
+                ""
+            ],
+            "cStandard": "gnu11",
+            "cppStandard": "gnu++11",
+            "compilerPath": "C:/Users/sbara/.platformio/packages/toolchain-atmelavr/bin/avr-gcc.exe",
+            "compilerArgs": [
+                "-mmcu=atmega4809",
+                ""
+            ]
+        }
+    ],
+    "version": 4
+}
