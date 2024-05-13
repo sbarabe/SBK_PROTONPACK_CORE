@@ -24,7 +24,7 @@
 /*       (with DFPlayerMini_Fast.h library)       */
 /////////////////////////////////////////////////////
 
-Player_DFPlayerMini_Fast::Player_DFPlayerMini_Fast(const uint8_t max, uint8_t volume, uint8_t RX_pin, uint8_t TX_pin, uint8_t pot_pin, bool vol_pot_exist,const uint8_t commandDelay)
+Player_DFPlayerMini_Fast::Player_DFPlayerMini_Fast(const uint8_t max, uint8_t volume, uint8_t RX_pin, uint8_t TX_pin, uint8_t pot_pin, bool vol_pot_exist, const uint8_t commandDelay)
     : _VOLUME_MAX(min(30, max)), _volume(volume), _RX_pin(RX_pin), _TX_pin(TX_pin), _pot_pin(pot_pin), _volPotActive(vol_pot_exist), _COMMAND_DELAY(commandDelay)
 {
     _startTime = 0;
@@ -114,22 +114,30 @@ bool Player_DFPlayerMini_Fast::isPlaying()
 
 void Player_DFPlayerMini_Fast::setThemesPlaymode()
 {
+    pinMode(_RX_pin, OUTPUT);
     _player.repeatFolder(1);
+    pinMode(_RX_pin, INPUT_PULLUP);
 }
 
 void Player_DFPlayerMini_Fast::setSinglePlaymode()
 {
-    // no function available for this in the library
+    // pinMode(_RX_pin,OUTPUT);
+    //  no function available for this in the library
+    // pinMode(_RX_pin,INPUT_PULLUP);
 }
 
 void Player_DFPlayerMini_Fast::setCyclingTrackPlaymode()
 {
-    // no function available for this in the library
+    // pinMode(_RX_pin,OUTPUT);
+    //  no function available for this in the library
+    // pinMode(_RX_pin,INPUT_PULLUP);
 }
 
 void Player_DFPlayerMini_Fast::loopFileNum(int16_t track_num)
 {
+    pinMode(_RX_pin, OUTPUT);
     _player.loop(track_num);
+    pinMode(_RX_pin, INPUT_PULLUP);
     _TrackDuration = 0;
     //_startTime = millis();
     //_TrackDuration = track_length;
@@ -141,7 +149,9 @@ void Player_DFPlayerMini_Fast::loopFileNum(int16_t track_num)
 
 void Player_DFPlayerMini_Fast::playFileNum(int16_t track_num, uint16_t track_length)
 {
+    pinMode(_RX_pin, OUTPUT);
     _player.play(track_num);
+    pinMode(_RX_pin, INPUT_PULLUP);
     _startTime = millis();
     _TrackDuration = track_length;
     /*
@@ -152,29 +162,39 @@ void Player_DFPlayerMini_Fast::playFileNum(int16_t track_num, uint16_t track_len
 
 void Player_DFPlayerMini_Fast::stop()
 {
+    pinMode(_RX_pin, OUTPUT);
     _player.stop();
+    pinMode(_RX_pin, INPUT_PULLUP);
 }
 
 void Player_DFPlayerMini_Fast::pause()
 {
+    pinMode(_RX_pin, OUTPUT);
     _player.pause();
+    pinMode(_RX_pin, INPUT_PULLUP);
 }
 
 void Player_DFPlayerMini_Fast::next()
 {
+    pinMode(_RX_pin, OUTPUT);
     _player.playNext();
+    pinMode(_RX_pin, INPUT_PULLUP);
 }
 
 void Player_DFPlayerMini_Fast::previous()
 {
+    pinMode(_RX_pin, OUTPUT);
     _player.playPrevious();
+    pinMode(_RX_pin, INPUT_PULLUP);
 }
 
 void Player_DFPlayerMini_Fast::setVol(uint8_t volume)
 {
     _volume = volume;
     constrain(_volume, 0, _VOLUME_MAX);
+    pinMode(_RX_pin, OUTPUT);
     _player.volume(_volume);
+    pinMode(_RX_pin, INPUT_PULLUP);
 }
 
 /////////////////////////////////////////////////////
@@ -183,7 +203,7 @@ void Player_DFPlayerMini_Fast::setVol(uint8_t volume)
 /*             (with DFRobot library)              */
 /////////////////////////////////////////////////////
 
-Player_DFPlayerMini::Player_DFPlayerMini(const uint8_t max, uint8_t volume, uint8_t RX_pin, uint8_t TX_pin, uint8_t pot_pin, bool vol_pot_exist,const uint8_t commandDelay)
+Player_DFPlayerMini::Player_DFPlayerMini(const uint8_t max, uint8_t volume, uint8_t RX_pin, uint8_t TX_pin, uint8_t pot_pin, bool vol_pot_exist, const uint8_t commandDelay)
     : _VOLUME_MAX(min(30, max)), _volume(volume), _RX_pin(RX_pin), _TX_pin(TX_pin), _pot_pin(pot_pin), _volPotActive(vol_pot_exist), _COMMAND_DELAY(commandDelay)
 {
     _startTime = 0;

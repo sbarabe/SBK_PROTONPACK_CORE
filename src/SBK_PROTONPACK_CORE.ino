@@ -20,7 +20,7 @@
  *
  *    SBK_PROTONPACK_CORE
  *    <https://github.com/sbarabe/SBK_PROTONPACK_CORE>
- *    Version 2.2
+ *    Version 2.3
  *
  *    This code was first intended to be use with the SBK Kid Proton Pack
  *    <https://github.com/sbarabe/SBK-KidSizeProtonPackArduino> but the code has been extended to
@@ -656,7 +656,7 @@ void loop()
       checkPlayThemesMode();                                       // Cut off sound effects if themes switch is ON
       if (!checkIfSwitchExit(!SWboot.isON(), STATE_SHUTTING_DOWN)) // Pack state exits : check if the pack is shutting down
       {
-        if (!checkIfSwitchExit((!PBfire.isON() && !PBrod.isON()), STATE_TAIL)) // Then check if firing buttons are released, pack goes in tail state
+        if (!checkIfSwitchExit(((!PBfire.isON() && !PBrod.isON()) || !SWcharge.isON()), STATE_TAIL)) // Then check if firing buttons are released, pack goes in tail state
         {
           checkIfTrackDoneExit(packState, STATE_FIRING_MAX); // Then check is pact state track is done playing and exit to next pack state
         }
@@ -694,7 +694,7 @@ void loop()
       checkPlayThemesMode();                                       // Cut off sound effects if themes switch is ON
       if (!checkIfSwitchExit(!SWboot.isON(), STATE_SHUTTING_DOWN)) // Pack state exits : check if the pack is shutting down
       {
-        if (!checkIfSwitchExit((!PBfire.isON() && !PBrod.isON()), STATE_TAIL)) // Then check if firing buttons are released, pack goes in tail state
+        if (!checkIfSwitchExit(((!PBfire.isON() && !PBrod.isON()) || !SWcharge.isON()), STATE_TAIL)) // Then check if firing buttons are released, pack goes in tail state
         {
           if (!checkIfSwitchExit((PBfire.isON() && PBrod.isON()), STATE_FIRING_OVERHEAT)) // Then check if both firing buttons are pressed, pack goes in overheat firing
           {
@@ -736,7 +736,7 @@ void loop()
       checkPlayThemesMode();                                       // Cut off sound effects if themes switch is ON
       if (!checkIfSwitchExit(!SWboot.isON(), STATE_SHUTTING_DOWN)) // Pack state exits : check if the pack is shutting down
       {
-        if (!checkIfSwitchExit((!PBfire.isON() && !PBrod.isON()), STATE_OVERHEATED)) // Then check if firing buttons are released, pack goes in in overheated state
+        if (!checkIfSwitchExit(((!PBfire.isON() && !PBrod.isON()) || !SWcharge.isON()), STATE_OVERHEATED)) // Then check if firing buttons are released, pack goes in in overheated state
         {
           checkIfTrackDoneExit(packState, STATE_OVERHEATED); // Then check is pact state track is done playing and exit to next pack state
         }
@@ -773,7 +773,10 @@ void loop()
       checkPlayThemesMode();                                       // Cut off sound effects if themes switch is ON
       if (!checkIfSwitchExit(!SWboot.isON(), STATE_SHUTTING_DOWN)) // Pack state exits : check if the pack is shutting down
       {
-        checkIfTrackDoneExit(packState, STATE_IDLING_CHARGED); // Then check is pact state track is done playing and exit to next pack state
+        if (!checkIfSwitchExit(((PBfire.isON() || PBrod.isON()) && SWcharge.isON()), STATE_FIRING_RAMP))
+        {                                                        // then check if fire buttons are ON, go to firing state
+          checkIfTrackDoneExit(packState, STATE_IDLING_CHARGED); // Then check is pact state track is done playing and exit to next pack state
+        }
       }
       break;
     }
