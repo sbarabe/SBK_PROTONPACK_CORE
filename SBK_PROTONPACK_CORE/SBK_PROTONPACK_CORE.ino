@@ -140,12 +140,12 @@ const bool LOOP = true;                                        // helper for aud
 //  https://github.com/MikeS11/ProtonPack/tree/master/Source/Libraries/ht16k33-arduino-master
 //  DRIVER should be defined in SBK_CONFIG.h file
 //  Bargraph helper variables :
-#include "BarGraphEngine.h"
+#include "src/BarGraphEngine.h"
 #ifdef BG_MAX72xx
 #include <LedControl.h>
 MAX72xxDriver bargraph(BARGRAPH_TOTAL_LEDS, BG_DIRECTION, BG_DIN, BG_CLK, BG_LOAD);
 #elif defined(BG_HT16K33)
-#include <HT16K33.h>
+#include "src/HT16K33.h"
 HT16K33Driver bargraph(BARGRAPH_TOTAL_LEDS, BG_DIRECTION, BG_DIN, BG_CLK, BG_ADDRESS);
 #endif
 
@@ -162,17 +162,17 @@ Adafruit_NeoPixel packLeds = Adafruit_NeoPixel(PACK_TOTAL_LEDS_NUMBER, PK_LEDS, 
 /***********************************************/
 /*                 VENT LEDs                   */
 /***********************************************/
-#include "VentEngine.h"
+#include "src/VentEngine.h"
 Vent packVent(packLeds, VENT_1ST_LED, VENT_LAST_LED);
 /***********************************************/
 /*               POWERCELL LEDs                */
 /***********************************************/
-#include "PowercellEngine.h"
+#include "src/PowercellEngine.h"
 Powercell powercell(packLeds, POWERCELL_DIRECTION, POWERCELL_1ST_LED, POWERCELL_LAST_LED);
 /***********************************************/
 /*               CYCLOTRON LEDs                */
 /***********************************************/
-#include "CyclotronEngine.h"
+#include "src/CyclotronEngine.h"
 /*****************************/
 /* >>>>> GB1/GB2 style <<<<< */
 /*****************************/
@@ -197,8 +197,8 @@ Adafruit_NeoPixel wandLeds = Adafruit_NeoPixel(WAND_TOTAL_LEDS_NUMBER, WD_LEDS, 
 /***********************************************/
 /*             WAND LEDS INDEX                 */
 /***********************************************/
-#include "IndicatorEngine.h"
-#include "RodEngine.h"
+#include "src/IndicatorEngine.h"
+#include "src/RodEngine.h"
 // Wand leds objects definition
 FiringRod firingRod(wandLeds, WAND_LED_TIP_1ST, WAND_LED_TIP_LAST);
 Vent wandVent(wandLeds, WAND_LED_1ST_VENT, WAND_LED_LAST_VENT);
@@ -211,7 +211,7 @@ Indicator firingRodIndicator(wandLeds, WAND_LED_FIRINGROD_YEL);
 /*********************************************/
 /*    AUDIO PLAYER definition and helpers    */
 /*********************************************/
-#include "PlayerEngine.h"
+#include "src/PlayerEngine.h"
 bool playing = false;           // variable for playin status
 bool cycling = false;           // cylcing single track mode tracker
 bool checkPlayerCommandDelay(); // function to check if audio command delay is paste since last play command
@@ -257,7 +257,7 @@ void checkPlayThemesMode(); // Function for playing themes
 /*                                           */
 /*********************************************/
 // For switches and buttons managing
-#include "SwitchEngine.h"
+#include "src/SwitchEngine.h"
 Switch SWthemes(THEME_SWITCH_PIN, false);
 Switch SWboot(BOOT_SWITCH_PIN, false);
 Switch SWcharge(CHARGE_SWITCH_PIN, false);
@@ -268,7 +268,7 @@ Switch PBrod(ROD_BUTTON_PIN, false);
 /*            AVAILABLE OPTIONS              */
 /*********************************************/
 /* SMOKER OPTION */
-#include "SmokeEngine.h"
+#include "src/SmokeEngine.h"
 #ifdef SMOKE_RELAY_PIN
 Smoker smoker(SMOKE_RELAY_PIN, &SMOKER_MAX_ON_TIME, &SMOKER_MIN_OFF_TIME, true);
 #endif
@@ -276,7 +276,7 @@ Smoker smoker(SMOKE_RELAY_PIN, &SMOKER_MAX_ON_TIME, &SMOKER_MIN_OFF_TIME, true);
 Smoker smoker(0, &SMOKER_MAX_ON_TIME, &SMOKER_MIN_OFF_TIME, false);
 #endif
 /* RUMBLER OPTION */
-#include "RumbleEngine.h"
+#include "src/RumbleEngine.h"
 #ifdef RUMBLE_RELAY_PIN
 Rumbler rumbler(RUMBLE_RELAY_PIN, &RUMBLER_MAX_ON_TIME, &RUMBLER_MIN_OFF_TIME, true);
 #endif
