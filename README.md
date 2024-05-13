@@ -1,5 +1,5 @@
 # SBK_PROTONPACK_CORE
-## Version 2.2
+## Version 2.3
 Code for lights and sound effects of a Proton Pack replica or other props.
 
 ## Installation
@@ -137,3 +137,8 @@ This library is written by Samuel Barabé, inspired by other members of the open
 
 2.2 Release in 2024-05-10 :
 - ventEngine fadeOut(uint8_t ramp_time) function corrected : program was stalling on divide by zero...
+  
+2.3 Release in 2024-05-13 :
+- added exits to sequence to assure smooth firing endings if powerdown or safety engage while firing...
+  
+  
