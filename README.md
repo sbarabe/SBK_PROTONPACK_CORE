@@ -1,4 +1,5 @@
 # SBK_PROTONPACK_CORE
+## Version 2.2
 Code for lights and sound effects of a Proton Pack replica or other props.
 
 ## Installation
@@ -103,7 +104,7 @@ Depending on your project hardware, the following library and their dependencies
 
 ## Sound effects
 
-Has examples, you'll find here some sounds effects that have been remixed for this code. The actual config file uses those track numbers and lengths. Note that the exact sources of the original sound files are unknowed, so it is impossible to way if they are copyrighted, but probably are in some way. Use these sound effects examples at your own risk : https://mega.nz/folder/GZ8TFIzK#W5bunWSMubMsOIHVNrYEIA
+As examples, you'll find here some sounds effects that have been remixed for this code. The actual config file uses those track numbers and lengths. Note that the exact sources of the original sound files are unknowed, so it is impossible to say if they are copyrighted, but probably are in some way. Use these sound effects examples at your own risk : https://mega.nz/folder/GZ8TFIzK#W5bunWSMubMsOIHVNrYEIA
 
 Note : the clipped files have been reduce in gain to lower distorsion on small speakers.
     
@@ -130,4 +131,9 @@ You should have received a copy of the GNU Lesser General Public License along w
 
 This library is written by Samuel Barabé, inspired by other members of the open source community in the GB props replica, like https://github.com/MikeS11, https://github.com/CountDeMonet and many others .
 
+## History
 
+2.1 Release in 2024-05-09
+
+2.2 Release in 2024-05-10 :
+- ventEngine fadeOut(uint8_t ramp_time) function corrected : program was stalling on divide by zero...
