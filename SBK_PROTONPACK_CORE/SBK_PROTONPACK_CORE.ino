@@ -145,7 +145,7 @@ const bool LOOP = true;                                        // helper for aud
 #include <LedControl.h>
 MAX72xxDriver bargraph(BARGRAPH_TOTAL_LEDS, BG_DIRECTION, BG_DIN, BG_CLK, BG_LOAD);
 #elif defined(BG_HT16K33)
-#include "src/HT16K33.h"
+#include "src/SBK_HT16K33/SBK_HT16K33.h"
 HT16K33Driver bargraph(BARGRAPH_TOTAL_LEDS, BG_DIRECTION, BG_DIN, BG_CLK, BG_ADDRESS);
 #endif
 

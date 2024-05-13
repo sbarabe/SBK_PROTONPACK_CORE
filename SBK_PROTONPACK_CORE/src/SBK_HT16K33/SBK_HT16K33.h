@@ -8,8 +8,8 @@
  *
  **********************************************************************/
 
-#ifndef HT16K33_H
-#define HT16K33_H
+#ifndef SBK_HT16K33_H
+#define SBK_HT16K33_H
 
 // include appropriate version of Arduino code
 #if (ARDUINO >= 100)

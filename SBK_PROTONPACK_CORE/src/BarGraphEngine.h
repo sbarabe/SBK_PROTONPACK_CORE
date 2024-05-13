@@ -22,7 +22,7 @@
 #include <Arduino.h>
 #include <LedControl.h>
 #include <SPI.h>
-#include "HT16K33.h"
+#include "SBK_HT16K33/SBK_HT16K33.h"
 
 class BarGraphAnimation
 {

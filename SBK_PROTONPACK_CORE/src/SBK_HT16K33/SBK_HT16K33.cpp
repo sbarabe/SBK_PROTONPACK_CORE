@@ -8,7 +8,7 @@
  *
  **********************************************************************/
 
-#include "HT16K33.h"
+#include "SBK_HT16K33.h"
 
 /**
  * Utility function to flip a 16-bit integer. There may be better ways of doing this—let me know!
