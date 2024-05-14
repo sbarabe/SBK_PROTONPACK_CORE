@@ -880,8 +880,11 @@ void getLEDsSchemeForThisState(uint8_t state)
       clearAllLights(); // clear cyclotron, powercell, vent and wands LEDS
     }
     // To show that power is still on on the pack, show some minimum ligths
-    topWhiteIndicator.green(INDICATOR_SLOW_FLASH); // set WAND_LED_TOP_WHITE led green flashing
-    powercell.poweredDown();                       // first led blinking slowly
+    if (POWERDOWN_BLINKING)
+    {
+      topWhiteIndicator.green(INDICATOR_SLOW_FLASH); // set WAND_LED_TOP_WHITE led green flashing
+      powercell.poweredDown();                       // first led blinking slowly
+    }
     break;
 
   case STATE_BOOTING:

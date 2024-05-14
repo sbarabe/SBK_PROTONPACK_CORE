@@ -314,6 +314,10 @@ const uint8_t STATE_SHUTTING_DOWN = 11;  // the pack is in the process of shutti
 /****************************/
 const uint16_t FIRING_WARNING_DELAY = 10000; // in mS, how long before indicator is falshing yellow
 const uint32_t FIRING_DURATION = 40000;      // in mS, how long max firing state before overheat
-// const uint16_t FIRING_OVERHEAT_DURATION = 15000; // STATE_FIRING_OVERHEAT duration
+
+/****************************/
+/* SOME ANIMATINONS OPTION  */
+/****************************/
+const bool POWERDOWN_BLINKING = true; // To show that power is still on on the pack, show some minimum ligths
 
 #endif

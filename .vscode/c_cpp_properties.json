@@ -10,6 +10,7 @@
             "includePath": [
                 "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/src",
                 "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/.pio/libdeps/nano_every/DFPlayerMini_Fast/src",
+                "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/.pio/libdeps/nano_every/FireTimer/src",
                 "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/.pio/libdeps/nano_every/DFRobotDFPlayerMini",
                 "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/.pio/libdeps/nano_every/LedControl/src",
                 "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/.pio/libdeps/nano_every/Adafruit NeoPixel",
@@ -17,7 +18,6 @@
                 "C:/Users/sbara/.platformio/packages/framework-arduino-megaavr/cores/arduino/api/deprecated",
                 "C:/Users/sbara/.platformio/packages/framework-arduino-megaavr/cores/arduino",
                 "C:/Users/sbara/.platformio/packages/framework-arduino-megaavr/variants/nona4809",
-                "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/.pio/libdeps/nano_every/FireTimer/src",
                 "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/.pio/libdeps/nano_every/ht16k33",
                 "C:/Users/sbara/.platformio/packages/framework-arduino-megaavr/libraries/EEPROM/src",
                 "C:/Users/sbara/.platformio/packages/framework-arduino-megaavr/libraries/SPI/src",
@@ -30,6 +30,7 @@
                 "path": [
                     "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/src",
                     "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/.pio/libdeps/nano_every/DFPlayerMini_Fast/src",
+                    "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/.pio/libdeps/nano_every/FireTimer/src",
                     "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/.pio/libdeps/nano_every/DFRobotDFPlayerMini",
                     "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/.pio/libdeps/nano_every/LedControl/src",
                     "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/.pio/libdeps/nano_every/Adafruit NeoPixel",
@@ -37,7 +38,6 @@
                     "C:/Users/sbara/.platformio/packages/framework-arduino-megaavr/cores/arduino/api/deprecated",
                     "C:/Users/sbara/.platformio/packages/framework-arduino-megaavr/cores/arduino",
                     "C:/Users/sbara/.platformio/packages/framework-arduino-megaavr/variants/nona4809",
-                    "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/.pio/libdeps/nano_every/FireTimer/src",
                     "C:/Users/sbara/OneDrive/Samuel - personnel/Electronics/PlatformIO/SBK_PROTONPACK_CORE/.pio/libdeps/nano_every/ht16k33",
                     "C:/Users/sbara/.platformio/packages/framework-arduino-megaavr/libraries/EEPROM/src",
                     "C:/Users/sbara/.platformio/packages/framework-arduino-megaavr/libraries/SPI/src",
