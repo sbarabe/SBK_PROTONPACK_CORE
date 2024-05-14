@@ -4,15 +4,21 @@ Code for lights and sound effects of a Proton Pack replica or other props.
 
 ## Installation
 
-After downloading, rename 'src' folder to 'SBK_PROTONPACK_CORE' and copy it into Arduino IDE sketches folder. Then open File->Sketchbook->SBK_PROTONPACK_CORE->SBK_PROTONPACK_CORE.ino.
-
+1) After downloading, copy 'SBK_PROTONPACK_CORE' to your Arduino IDE sketches folder.
+2) If you wnat, you can use a pre-configure file that fits your needs : just rename the pre-configured SBK_CONFIG_***.txt file to SBK_CONFIG.h.
+3) In Arduino IDe, open File->Sketchbook->SBK_PROTONPACK_CORE->SBK_PROTONPACK_CORE.ino, you will see two tabs :
+     - SBK_PROTONPACK_CORE.ino
+     - SBK_CONFIG.h
+4) Select the SBK_CONFIG.h tab and check/modify this file to fit your hardware : pins definition, WS2812 LEDs index, audio tracks length, etc.
+5) Upload to your MCU.
+   
 ### Library
 
 Depending on your project hardware, the following library and their dependencies are required :
 
 - For bar graph driver :
-    -  MAX71xx >>>   LedControl.h (https://github.com/wayoda/LedControl)
-    -  HT16K33 >>>   HT16K33.h (https://github.com/MikeS11/ProtonPack/tree/master/Source/Libraries/ht16k33-arduino-master)
+    -  MAX71xx     >>>   LedControl.h (https://github.com/wayoda/LedControl)
+    -  HT16K33     >>>  SBK_HT16K33.h (already included in the code, in the src subfolder)
 - For WS2812 LEDs :       Adafruit_NeoPixel.h (https://github.com/adafruit/Adafruit_NeoPixel)
 - For DFPlayer Pro (not fully tested yet) : DFRobot_DF1201S.h (https://github.com/DFRobot/DFRobot_DF1201S)
 - For DFPlayer Mini :
@@ -58,7 +64,7 @@ Depending on your project hardware, the following library and their dependencies
     
   #### *** ADVANCED USERS ***
   
-  If you want to change animations styles and colors, you need to go in the engines files and modified the associated functions or create new ones. Then you will have to implement them in the getLEDsSchemeForThisState() function in the core file.
+  If you want to change animations styles and colors, you need to go in the engines files and modified the associated functions or create new ones. They are located in the 'src' subfolder : they are not visible in Arduino IDE when you open your sketch but you can still edit them in a text editor or in Visual Studio. Then you will have to implement them in the getLEDsSchemeForThisState() function in the core file.
 
   If you want to change the pack state switch/cases workflow, you will have to modify pack states list and audio tracks list/length/looping in the CONFIG file, and the Main Loop pact states switch/cases contents.
 
@@ -68,7 +74,7 @@ Depending on your project hardware, the following library and their dependencies
 - ### Code splited in organized files  
 
   This code is based on objects programming, objects are defined in their *.h and *.cpp files. Objects instances are created and used in the core file SBK_PROTONPACK_CORE.ino. There is also a config file, SBK_CONFIG.h, where all basic parameters can be changed according to hardware used. This fully compartmented code helps keeping code cleaner and easier to update/maintain. This also prevent having an endless code hard to follow.
-
+ 
 - ### Compatible HARDWARE
 
   This code is intended to be use with any PCB and MCU that fits minimum pins requirements :
@@ -139,6 +145,8 @@ This library is written by Samuel Barabé, inspired by other members of the open
 - ventEngine fadeOut(uint8_t ramp_time) function corrected : program was stalling on divide by zero...
   
 2.3 Release in 2024-05-13 :
-- added exits to sequence to assure smooth firing endings if powerdown or safety engage while firing...
+- added exits to sequence to assure smooth firing endings if powerdown or safety engage while firing ;
+- moved engines files to src subfolder : they are no longer visible in the Arduino IDE, only CORE and CONFIG file remain visible;
+- included  a modified HT16K33 library in the src subfolder : SBK_HT16K33.h
   
   
