@@ -5,7 +5,7 @@ Code for lights and sound effects of a Proton Pack replica or other props.
 ## Installation
 
 1) After downloading, copy 'SBK_PROTONPACK_CORE' folder, including the 'src' subfolder, to your Arduino IDE sketches folder.
-2) If you wnat, you can use a pre-configure file that fits your needs : just rename the pre-configured SBK_CONFIG_***.txt file to SBK_CONFIG.h.
+2) If you want, you can use a pre-configure file that fits your needs : just rename the pre-configured SBK_CONFIG_***.txt file to SBK_CONFIG.h.
 3) In Arduino IDe, open File->Sketchbook->SBK_PROTONPACK_CORE->SBK_PROTONPACK_CORE.ino, you will see two tabs :
      - SBK_PROTONPACK_CORE.ino
      - SBK_CONFIG.h
