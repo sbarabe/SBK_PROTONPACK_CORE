@@ -37,6 +37,7 @@ public:
     void setDirection(bool direction);
 
 private:
+    bool isCyclotronLed(uint8_t pin);
     void _setColorAll(uint8_t red, uint8_t green, uint8_t blue);
     void _setColor(uint16_t pixel, uint8_t red, uint8_t green, uint8_t blue);
     void _cell1();
