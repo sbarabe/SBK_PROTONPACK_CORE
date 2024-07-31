@@ -159,6 +159,10 @@ HT16K33Driver bargraph(BARGRAPH_TOTAL_LEDS, BG_DIRECTION, BG_DIN, BG_CLK, BG_ADD
 /*          PACK WS2812 leds chain           */
 /*********************************************/
 Adafruit_NeoPixel packLeds = Adafruit_NeoPixel(PACK_TOTAL_LEDS_NUMBER, PK_LEDS, NEO_GRB + NEO_KHZ800);
+/*********************************************/
+/*          WAND WS2812 leds chain           */
+/*********************************************/
+Adafruit_NeoPixel wandLeds = Adafruit_NeoPixel(WAND_TOTAL_LEDS_NUMBER, WD_LEDS, NEO_GRB + NEO_KHZ800);
 /***********************************************/
 /*                 VENT LEDs                   */
 /***********************************************/
@@ -190,10 +194,6 @@ Cyclotron_GB1_GB2 cyclotron(packLeds, CYCLOTRON_DIRECTION,
 Cyclotron_AF_FE cyclotron(packLeds, CYCLOTRON_DIRECTION, CYC_RING_1ST_LED, CYC_RING_LAST_LED);
 #endif
 
-/*********************************************/
-/*          WAND WS2812 leds chain           */
-/*********************************************/
-Adafruit_NeoPixel wandLeds = Adafruit_NeoPixel(WAND_TOTAL_LEDS_NUMBER, WD_LEDS, NEO_GRB + NEO_KHZ800);
 /***********************************************/
 /*             WAND LEDS INDEX                 */
 /***********************************************/
@@ -241,7 +241,7 @@ const uint16_t PLAYER_BAUDRATE = 9600;                                          
 #ifdef ARDUINO_AVR_NANO_EVERY
 #define PLAYER_SERIAL1
 #endif
-#ifdef ARDUINO_AVR_NANO
+#if defined(ARDUINO_AVR_NANO) || defined(ARDUINO_AVR_PRO)
 #include <SoftwareSerial.h>
 SoftwareSerial SoftSerial(SW_RX, SW_TX);
 #define PLAYER_SOFTSERIAL

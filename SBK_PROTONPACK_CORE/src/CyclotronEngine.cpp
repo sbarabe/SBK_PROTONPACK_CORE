@@ -133,8 +133,10 @@ void Cyclotron_GB1_GB2::update()
         {
             j = _end4 - i;
         }
-        // set segments according to mapping define in setting
-        _strip.setPixelColor((j), _ledState[i][0], _ledState[i][1], _ledState[i][2]);
+        if(isCyclotronLed(j)) {
+            // set segments according to mapping define in setting
+            _strip.setPixelColor((j), _ledState[i][0], _ledState[i][1], _ledState[i][2]);
+        }
     }
 }
 
@@ -477,6 +479,13 @@ void Cyclotron_GB1_GB2::_cellClear(uint8_t start, uint8_t end)
     }
 }
 
+bool Cyclotron_GB1_GB2::isCyclotronLed(uint8_t pin) {
+    return
+      (pin >= _start1 && pin <= _end1) ||
+      (pin >= _start2 && pin <= _end2) ||
+      (pin >= _start3 && pin <= _end3) ||
+      (pin >= _start4 && pin <= _end4);
+}
 void Cyclotron_GB1_GB2::_setColorAll(uint8_t red, uint8_t green, uint8_t blue)
 {
     for (uint16_t i = 0; i < _numLeds; i++)
