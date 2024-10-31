@@ -29,15 +29,16 @@ public:
     void begin();
     void update();
     void clear();
-    void boot(int16_t boot_time, bool init);
-    void warming(int16_t warming_time, bool init);
-    void cooling(int16_t cooling_time, bool init);
-    void shutdown(int16_t cooling_time, bool init);
+    void setColor(uint8_t red, uint8_t green, uint8_t blue);
     bool rampToCoolBlue(int16_t ramp_time, bool init);
     bool rampToRed(int16_t ramp_time, bool init);
-    void rampToOrange(int16_t ramp_time, bool init);
-    void fadeOut(int16_t ramp_time, bool init);
-    void setColor(uint8_t red, uint8_t green, uint8_t blue);
+    bool rampToOrange(int16_t ramp_time, bool init);
+    bool fadeOut(int16_t ramp_time, bool init);
+        // REMOVED ANIMATIONS BECAUSE THEY SEEMS TO CREATE BUGS
+    // void boot(int16_t boot_time, bool init);
+    // void warming(int16_t warming_time, bool init);
+    // void cooling(int16_t cooling_time, bool init);
+    // void shutdown(int16_t cooling_time, bool init);
 
 private:
     bool _rampColor(int16_t *colorTracker, int16_t rampTime, bool init, int16_t *initTracker, int16_t tg, int16_t *interval, int16_t increment, unsigned long *prevTime);
