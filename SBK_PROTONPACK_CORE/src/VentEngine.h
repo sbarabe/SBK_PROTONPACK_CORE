@@ -34,7 +34,7 @@ public:
     bool rampToRed(int16_t ramp_time, bool init);
     bool rampToOrange(int16_t ramp_time, bool init);
     bool fadeOut(int16_t ramp_time, bool init);
-        // REMOVED ANIMATIONS BECAUSE THEY SEEMS TO CREATE BUGS
+    // REMOVED ANIMATIONS BECAUSE THEY SEEMS TO CREATE BUGS
     // void boot(int16_t boot_time, bool init);
     // void warming(int16_t warming_time, bool init);
     // void cooling(int16_t cooling_time, bool init);
