@@ -1,5 +1,5 @@
 /*
- *  PlayerEngine.cpp is a part of SBK_PROTONPACK_CORE (VERSION 2.1) code for sound effects and animations of a Proton Pack replica
+ *  PlayerEngine.cpp is a part of SBK_PROTONPACK_CORE (VERSION 2.4) code for sound effects and animations of a Proton Pack replica
  *  Copyright (c) 2023-2024 Samuel Barabé
  *
  *  See this page for reference <https://github.com/sbarabe/SBK_PROTONPACK_CORE>.
@@ -25,176 +25,169 @@
 /////////////////////////////////////////////////////
 
 Player_DFPlayerMini_Fast::Player_DFPlayerMini_Fast(const uint8_t max, uint8_t volume, uint8_t RX_pin, uint8_t TX_pin, uint8_t pot_pin, bool vol_pot_exist, const uint8_t commandDelay)
-    : _VOLUME_MAX(min(30, max)), _volume(volume), _RX_pin(RX_pin), _TX_pin(TX_pin), _pot_pin(pot_pin), _volPotActive(vol_pot_exist), _COMMAND_DELAY(commandDelay)
-{
-    _startTime = 0;
-    _startTimePrev = 0;
-    _prevVolume = _volume;
-    playing = false;
-    _TrackDuration = 0;
+  : _VOLUME_MAX(min(30, max)), _volume(volume), _RX_pin(RX_pin), _TX_pin(TX_pin), _pot_pin(pot_pin), _volPotActive(vol_pot_exist), _COMMAND_DELAY(commandDelay) {
+  _startTime = 0;
+  _startTimePrev = 0;
+  _prevVolume = _volume;
+  playing = false;
+  _TrackDuration = 0;
+  _gain=5;
 }
 
-bool Player_DFPlayerMini_Fast::begin(Stream &s)
-{
-    if (_player.begin(s, false, 50))
-    {
-        delay(_COMMAND_DELAY);
-        setVol(_volume);
-        delay(_COMMAND_DELAY);
-        _player.playbackSource(2);
-        delay(_COMMAND_DELAY);
-        _player.EQSelect(1);
-        delay(_COMMAND_DELAY);
-        _player.stop();
-        delay(_COMMAND_DELAY);
-        _player.startDAC();
-        delay(_COMMAND_DELAY);
-        _player.stopRepeat();
-        delay(_COMMAND_DELAY);
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-void Player_DFPlayerMini_Fast::defineVolumePot(uint8_t pin, bool active)
-{
-    _pot_pin = pin;
-    pinMode(_pot_pin, INPUT);
-    _volPotActive = active;
-}
-
-uint8_t Player_DFPlayerMini_Fast::setVolWithPot()
-{
-    if (_volPotActive)
-    {
-        long potValue;
-        uint8_t newVolume = _volume;
-        static unsigned long prevTime = 0;
-        if (millis() - prevTime >= 250)
-        {
-            prevTime = millis();
-            if (_volPotActive)
-            {
-                potValue = analogRead(_pot_pin);
-                newVolume = (uint8_t)map(potValue, 10, 1000, 0, _VOLUME_MAX);
-            }
-        }
-        if (newVolume != _volume)
-        {
-            _volume = newVolume;
-            _player.volume(newVolume);
-        }
-    }
-    return _volume;
-}
-
-bool Player_DFPlayerMini_Fast::isPlaying()
-{
-    if ((millis() - _startTime) < _TrackDuration)
-    {
-        if (!playing)
-        {
-            playing = true;
-            // Serial.println("playing start !");
-        }
-    }
-    else
-    {
-        if (playing)
-        {
-            playing = false;
-            // Serial.println("playing stop !");
-        }
-    }
-    return playing;
-}
-
-void Player_DFPlayerMini_Fast::setThemesPlaymode()
-{
-    pinMode(_RX_pin, OUTPUT);
-    _player.repeatFolder(1);
-    pinMode(_RX_pin, INPUT_PULLUP);
-}
-
-void Player_DFPlayerMini_Fast::setSinglePlaymode()
-{
-    // pinMode(_RX_pin,OUTPUT);
-    //  no function available for this in the library
-    // pinMode(_RX_pin,INPUT_PULLUP);
-}
-
-void Player_DFPlayerMini_Fast::setCyclingTrackPlaymode()
-{
-    // pinMode(_RX_pin,OUTPUT);
-    //  no function available for this in the library
-    // pinMode(_RX_pin,INPUT_PULLUP);
-}
-
-void Player_DFPlayerMini_Fast::loopFileNum(int16_t track_num)
-{
-    pinMode(_RX_pin, OUTPUT);
-    _player.loop(track_num);
-    pinMode(_RX_pin, INPUT_PULLUP);
-    _TrackDuration = 0;
-    //_startTime = millis();
-    //_TrackDuration = track_length;
-    /*
-    Serial.print("before = "), Serial.print(_before);
-    Serial.print("   after = "), Serial.println(_startTime);
-    */
-}
-
-void Player_DFPlayerMini_Fast::playFileNum(int16_t track_num, uint16_t track_length)
-{
-    pinMode(_RX_pin, OUTPUT);
-    _player.play(track_num);
-    pinMode(_RX_pin, INPUT_PULLUP);
-    _startTime = millis();
-    _TrackDuration = track_length;
-    /*
-    Serial.print("before = "), Serial.print(_before);
-    Serial.print("   after = "), Serial.println(_startTime);
-    */
-}
-
-void Player_DFPlayerMini_Fast::stop()
-{
-    pinMode(_RX_pin, OUTPUT);
+bool Player_DFPlayerMini_Fast::begin(Stream &s) {
+  if (_player.begin(s, false, 50)) {
+    delay(_COMMAND_DELAY);
+    _player.volumeAdjustSet(_gain);
+    delay(_COMMAND_DELAY);
+    setVol(_volume);
+    delay(_COMMAND_DELAY);
+    _player.playbackSource(2);
+    delay(_COMMAND_DELAY);
+    _player.EQSelect(1);
+    delay(_COMMAND_DELAY);
     _player.stop();
-    pinMode(_RX_pin, INPUT_PULLUP);
+    delay(_COMMAND_DELAY);
+    _player.startDAC();
+    delay(_COMMAND_DELAY);
+    _player.stopRepeat();
+    delay(_COMMAND_DELAY);
+    return true;
+  } else {
+    return false;
+  }
 }
 
-void Player_DFPlayerMini_Fast::pause()
-{
-    pinMode(_RX_pin, OUTPUT);
-    _player.pause();
-    pinMode(_RX_pin, INPUT_PULLUP);
+void Player_DFPlayerMini_Fast::defineVolumePot(uint8_t pin, bool active) {
+  _pot_pin = pin;
+  pinMode(_pot_pin, INPUT);
+  _volPotActive = active;
 }
 
-void Player_DFPlayerMini_Fast::next()
-{
-    pinMode(_RX_pin, OUTPUT);
-    _player.playNext();
-    pinMode(_RX_pin, INPUT_PULLUP);
+
+uint8_t Player_DFPlayerMini_Fast::setVolWithPotatStart() {
+  if (_volPotActive) {
+    long potValue;
+    uint8_t newVolume = _volume;
+    if (_volPotActive) {
+      potValue = analogRead(_pot_pin);
+      newVolume = (uint8_t)map(potValue, 10, 1000, 0, _VOLUME_MAX);
+    }
+    if (newVolume != _volume) {
+      _volume = newVolume;
+      _player.volume(newVolume);
+    }
+  }
+  return _volume;
 }
 
-void Player_DFPlayerMini_Fast::previous()
-{
-    pinMode(_RX_pin, OUTPUT);
-    _player.playPrevious();
-    pinMode(_RX_pin, INPUT_PULLUP);
+uint8_t Player_DFPlayerMini_Fast::setVolWithPot() {
+  if (_volPotActive) {
+    long potValue;
+    uint8_t newVolume = _volume;
+    static unsigned long prevTime = 0;
+    if (millis() - prevTime >= 250) {
+      prevTime = millis();
+      if (_volPotActive) {
+        potValue = analogRead(_pot_pin);
+        newVolume = (uint8_t)map(potValue, 10, 1000, 0, _VOLUME_MAX);
+      }
+    }
+    if (newVolume != _volume) {
+      _volume = newVolume;
+      _player.volume(newVolume);
+    }
+  }
+  return _volume;
 }
 
-void Player_DFPlayerMini_Fast::setVol(uint8_t volume)
-{
-    _volume = volume;
-    constrain(_volume, 0, _VOLUME_MAX);
-    pinMode(_RX_pin, OUTPUT);
-    _player.volume(_volume);
-    pinMode(_RX_pin, INPUT_PULLUP);
+bool Player_DFPlayerMini_Fast::isPlaying() {
+  if ((millis() - _startTime) < _TrackDuration) {
+    if (!playing) {
+      playing = true;
+      // Serial.println("playing start !");
+    }
+  } else {
+    if (playing) {
+      playing = false;
+      // Serial.println("playing stop !");
+    }
+  }
+  return playing;
+}
+
+void Player_DFPlayerMini_Fast::setThemesPlaymode() {
+  pinMode(_RX_pin, OUTPUT);
+  _player.repeatFolder(1);
+  pinMode(_RX_pin, INPUT_PULLUP);
+}
+
+void Player_DFPlayerMini_Fast::setSinglePlaymode() {
+  // pinMode(_RX_pin,OUTPUT);
+  //  no function available for this in the library
+  // pinMode(_RX_pin,INPUT_PULLUP);
+}
+
+void Player_DFPlayerMini_Fast::setCyclingTrackPlaymode() {
+  // pinMode(_RX_pin,OUTPUT);
+  //  no function available for this in the library
+  // pinMode(_RX_pin,INPUT_PULLUP);
+}
+
+void Player_DFPlayerMini_Fast::loopFileNum(int16_t track_num) {
+  pinMode(_RX_pin, OUTPUT);
+  _player.loop(track_num);
+  pinMode(_RX_pin, INPUT_PULLUP);
+  _TrackDuration = 0;
+  //_startTime = millis();
+  //_TrackDuration = track_length;
+  /*
+    Serial.print("before = "), Serial.print(_before);
+    Serial.print("   after = "), Serial.println(_startTime);
+    */
+}
+
+void Player_DFPlayerMini_Fast::playFileNum(int16_t track_num, uint16_t track_length) {
+  pinMode(_RX_pin, OUTPUT);
+  _player.play(track_num);
+  pinMode(_RX_pin, INPUT_PULLUP);
+  _startTime = millis();
+  _TrackDuration = track_length;
+  /*
+    Serial.print("before = "), Serial.print(_before);
+    Serial.print("   after = "), Serial.println(_startTime);
+    */
+}
+
+void Player_DFPlayerMini_Fast::stop() {
+  pinMode(_RX_pin, OUTPUT);
+  _player.stop();
+  pinMode(_RX_pin, INPUT_PULLUP);
+}
+
+void Player_DFPlayerMini_Fast::pause() {
+  pinMode(_RX_pin, OUTPUT);
+  _player.pause();
+  pinMode(_RX_pin, INPUT_PULLUP);
+}
+
+void Player_DFPlayerMini_Fast::next() {
+  pinMode(_RX_pin, OUTPUT);
+  _player.playNext();
+  pinMode(_RX_pin, INPUT_PULLUP);
+}
+
+void Player_DFPlayerMini_Fast::previous() {
+  pinMode(_RX_pin, OUTPUT);
+  _player.playPrevious();
+  pinMode(_RX_pin, INPUT_PULLUP);
+}
+
+void Player_DFPlayerMini_Fast::setVol(uint8_t volume) {
+  _volume = volume;
+  constrain(_volume, 0, _VOLUME_MAX);
+  pinMode(_RX_pin, OUTPUT);
+  _player.volume(_volume);
+  pinMode(_RX_pin, INPUT_PULLUP);
 }
 
 /////////////////////////////////////////////////////
@@ -204,153 +197,142 @@ void Player_DFPlayerMini_Fast::setVol(uint8_t volume)
 /////////////////////////////////////////////////////
 
 Player_DFPlayerMini::Player_DFPlayerMini(const uint8_t max, uint8_t volume, uint8_t RX_pin, uint8_t TX_pin, uint8_t pot_pin, bool vol_pot_exist, const uint8_t commandDelay)
-    : _VOLUME_MAX(min(30, max)), _volume(volume), _RX_pin(RX_pin), _TX_pin(TX_pin), _pot_pin(pot_pin), _volPotActive(vol_pot_exist), _COMMAND_DELAY(commandDelay)
-{
-    _startTime = 0;
-    _startTimePrev = 0;
-    _prevVolume = _volume;
-    playing = false;
-    _TrackDuration = 0;
+  : _VOLUME_MAX(min(30, max)), _volume(volume), _RX_pin(RX_pin), _TX_pin(TX_pin), _pot_pin(pot_pin), _volPotActive(vol_pot_exist), _COMMAND_DELAY(commandDelay) {
+  _startTime = 0;
+  _startTimePrev = 0;
+  _prevVolume = _volume;
+  playing = false;
+  _TrackDuration = 0;
 }
 
-bool Player_DFPlayerMini::begin(Stream &s)
-{
-    if (_player.begin(s, false, true))
-    {
-        delay(_COMMAND_DELAY);
-        _player.outputDevice(DFPLAYER_DEVICE_SD);
-        delay(_COMMAND_DELAY);
-        _player.EQ(DFPLAYER_EQ_POP);
-        delay(_COMMAND_DELAY);
-        _player.setTimeOut(50);
-        delay(_COMMAND_DELAY);
-        _player.enableDAC();
-        delay(_COMMAND_DELAY);
-        _player.disableLoop();
-        delay(_COMMAND_DELAY);
-        setVol(_volume);
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-void Player_DFPlayerMini::defineVolumePot(uint8_t pin, bool active)
-{
-    _pot_pin = pin;
-    pinMode(_pot_pin, INPUT);
-    _volPotActive = active;
-}
-
-uint8_t Player_DFPlayerMini::setVolWithPot()
-{
-    if (_volPotActive)
-    {
-        long potValue;
-        uint8_t newVolume = _volume;
-        static unsigned long prevTime = 0;
-        if (millis() - prevTime >= 250)
-        {
-            prevTime = millis();
-            if (_volPotActive)
-            {
-                potValue = analogRead(_pot_pin);
-                newVolume = (uint8_t)map(potValue, 10, 1000, 0, _VOLUME_MAX);
-            }
-        }
-        if (newVolume != _volume)
-        {
-            _volume = newVolume;
-            _player.volume(newVolume);
-        }
-    }
-    return _volume;
-}
-
-bool Player_DFPlayerMini::isPlaying()
-{
-    if ((millis() - _startTime) < _TrackDuration)
-    {
-        if (!playing)
-        {
-            playing = true;
-            // Serial.println("playing start !");
-        }
-    }
-    else
-    {
-        if (playing)
-        {
-            playing = false;
-            // Serial.println("playing stop !");
-        }
-    }
-    return playing;
-}
-
-void Player_DFPlayerMini::setThemesPlaymode()
-{
-    _player.loopFolder(1);
-    _TrackDuration = 0;
-}
-
-void Player_DFPlayerMini::setSinglePlaymode()
-{
+bool Player_DFPlayerMini::begin(Stream &s) {
+  if (_player.begin(s, false, true)) {
+    delay(_COMMAND_DELAY);
+    _player.outputDevice(DFPLAYER_DEVICE_SD);
+    delay(_COMMAND_DELAY);
+    _player.EQ(DFPLAYER_EQ_POP);
+    delay(_COMMAND_DELAY);
+    _player.setTimeOut(50);
+    delay(_COMMAND_DELAY);
+    _player.enableDAC();
+    delay(_COMMAND_DELAY);
     _player.disableLoop();
+    delay(_COMMAND_DELAY);
+    setVol(_volume);
+    return true;
+  } else {
+    return false;
+  }
 }
 
-void Player_DFPlayerMini::setCyclingTrackPlaymode()
-{
-    _player.enableLoop();
+void Player_DFPlayerMini::defineVolumePot(uint8_t pin, bool active) {
+  _pot_pin = pin;
+  pinMode(_pot_pin, INPUT);
+  _volPotActive = active;
 }
 
-void Player_DFPlayerMini::loopFileNum(int16_t track_num)
-{
-    _player.loop(track_num);
-    //_startTime = millis();
-    //_TrackDuration = track_length;
-    /*
+uint8_t Player_DFPlayerMini::setVolWithPotatStart() {
+  if (_volPotActive) {
+    long potValue;
+    uint8_t newVolume = _volume;
+    if (_volPotActive) {
+      potValue = analogRead(_pot_pin);
+      newVolume = (uint8_t)map(potValue, 10, 1000, 0, _VOLUME_MAX);
+    }
+    if (newVolume != _volume) {
+      _volume = newVolume;
+      _player.volume(newVolume);
+    }
+  }
+  return _volume;
+}
+
+uint8_t Player_DFPlayerMini::setVolWithPot() {
+  if (_volPotActive) {
+    long potValue;
+    uint8_t newVolume = _volume;
+    static unsigned long prevTime = 0;
+    if (millis() - prevTime >= 250) {
+      prevTime = millis();
+      if (_volPotActive) {
+        potValue = analogRead(_pot_pin);
+        newVolume = (uint8_t)map(potValue, 10, 1000, 0, _VOLUME_MAX);
+      }
+    }
+    if (newVolume != _volume) {
+      _volume = newVolume;
+      _player.volume(newVolume);
+    }
+  }
+  return _volume;
+}
+
+bool Player_DFPlayerMini::isPlaying() {
+  if ((millis() - _startTime) < _TrackDuration) {
+    if (!playing) {
+      playing = true;
+      // Serial.println("playing start !");
+    }
+  } else {
+    if (playing) {
+      playing = false;
+      // Serial.println("playing stop !");
+    }
+  }
+  return playing;
+}
+
+void Player_DFPlayerMini::setThemesPlaymode() {
+  _player.loopFolder(1);
+  _TrackDuration = 0;
+}
+
+void Player_DFPlayerMini::setSinglePlaymode() {
+  _player.disableLoop();
+}
+
+void Player_DFPlayerMini::setCyclingTrackPlaymode() {
+  _player.enableLoop();
+}
+
+void Player_DFPlayerMini::loopFileNum(int16_t track_num) {
+  _player.loop(track_num);
+  //_startTime = millis();
+  //_TrackDuration = track_length;
+  /*
     Serial.print("before = "), Serial.print(_before);
     Serial.print("   after = "), Serial.println(_startTime);
     */
 }
 
-void Player_DFPlayerMini::playFileNum(int16_t track_num, uint16_t track_length)
-{
-    _player.play(track_num);
-    _startTime = millis();
-    _TrackDuration = track_length;
-    /*
+void Player_DFPlayerMini::playFileNum(int16_t track_num, uint16_t track_length) {
+  _player.play(track_num);
+  _startTime = millis();
+  _TrackDuration = track_length;
+  /*
     Serial.print("before = "), Serial.print(_before);
     Serial.print("   after = "), Serial.println(_startTime);
     */
 }
 
-void Player_DFPlayerMini::stop()
-{
-    _player.stop();
+void Player_DFPlayerMini::stop() {
+  _player.stop();
 }
 
-void Player_DFPlayerMini::pause()
-{
-    _player.pause();
+void Player_DFPlayerMini::pause() {
+  _player.pause();
 }
 
-void Player_DFPlayerMini::next()
-{
-    _player.next();
+void Player_DFPlayerMini::next() {
+  _player.next();
 }
 
-void Player_DFPlayerMini::previous()
-{
-    _player.previous();
+void Player_DFPlayerMini::previous() {
+  _player.previous();
 }
 
-void Player_DFPlayerMini::setVol(uint8_t volume)
-{
-    _volume = volume;
-    constrain(_volume, 0, _VOLUME_MAX);
-    _player.volume(_volume);
+void Player_DFPlayerMini::setVol(uint8_t volume) {
+  _volume = volume;
+  constrain(_volume, 0, _VOLUME_MAX);
+  _player.volume(_volume);
 }

@@ -1,5 +1,5 @@
 /*
- *  VentEngine.cpp is a part of SBK_PROTONPACK_CORE (VERSION 2.1) code for animations of a Proton Pack replica
+ *  VentEngine.cpp is a part of SBK_PROTONPACK_CORE (VERSION 2.4) code for animations of a Proton Pack replica
  *  Copyright (c) 2023-2024 Samuel Barabé
  *
  *  See this page for reference <https://github.com/sbarabe/SBK_PROTONPACK_CORE>.
@@ -57,7 +57,7 @@ void Vent::setColor(uint8_t red, uint8_t green, uint8_t blue)
     _greenTracker = green;
     _blueTracker = blue;
 }
-
+/*
 void Vent::boot(int16_t boot_time, bool init)
 {
     int16_t increment = 10;
@@ -186,27 +186,85 @@ void Vent::shutdown(int16_t cooling_time, bool init)
         }
     }
 }
-
-void Vent::rampToCoolBlue(int16_t ramp_time, bool init)
+*/
+bool Vent::rampToRed(int16_t ramp_time, bool init)
 {
-    int16_t redTarget = 50;
-    int16_t greenTarget = 50;
-    int16_t blueTarget = 255;
+    static unsigned long rampStartTime;
+    if (init)
+    {
+        rampStartTime = millis();
+    }
+    int16_t redTarget = 255;
+    int16_t greenTarget = 0;
+    int16_t blueTarget = 0;
 
-    int16_t redIncrement = 1;
-    int16_t greenIncrement = 1;
-    int16_t blueIncrement = 1;
+    int16_t redIncrement = 5;
+    int16_t greenIncrement = 5;
+    int16_t blueIncrement = 5;
+
+    _rampColor(&_redTracker, ramp_time, init, &_initRedTracker, redTarget, &_intervalRed, redIncrement, &_prevTimeRed);
+    _rampColor(&_greenTracker, ramp_time, init, &_initGreenTracker, greenTarget, &_intervalGreen, greenIncrement, &_prevTimeGreen);
+    _rampColor(&_blueTracker, ramp_time, init, &_initBlueTracker, blueTarget, &_intervalBlue, blueIncrement, &_prevTimeBlue);
+
+    if ((_redTracker == redTarget && _greenTracker == greenTarget && _blueTracker == blueTarget) || (millis() - rampStartTime > ramp_time))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+void Vent::rampToOrange(int16_t ramp_time, bool init)
+{
+    int16_t redTarget = 255;
+    int16_t greenTarget = 50;
+    int16_t blueTarget = 0;
+
+    int16_t redIncrement = 5;
+    int16_t greenIncrement = 5;
+    int16_t blueIncrement = 5;
 
     _rampColor(&_redTracker, ramp_time, init, &_initRedTracker, redTarget, &_intervalRed, redIncrement, &_prevTimeRed);
     _rampColor(&_greenTracker, ramp_time, init, &_initGreenTracker, greenTarget, &_intervalGreen, greenIncrement, &_prevTimeGreen);
     _rampColor(&_blueTracker, ramp_time, init, &_initBlueTracker, blueTarget, &_intervalBlue, blueIncrement, &_prevTimeBlue);
 }
 
+bool Vent::rampToCoolBlue(int16_t ramp_time, bool init)
+{
+    static unsigned long rampStartTime;
+    if (init)
+    {
+        rampStartTime = millis();
+    }
+    int16_t redTarget = 50;
+    int16_t greenTarget = 50;
+    int16_t blueTarget = 255;
+
+    int16_t redIncrement = 5;
+    int16_t greenIncrement = 5;
+    int16_t blueIncrement = 5;
+
+    _rampColor(&_redTracker, ramp_time, init, &_initRedTracker, redTarget, &_intervalRed, redIncrement, &_prevTimeRed);
+    _rampColor(&_greenTracker, ramp_time, init, &_initGreenTracker, greenTarget, &_intervalGreen, greenIncrement, &_prevTimeGreen);
+    _rampColor(&_blueTracker, ramp_time, init, &_initBlueTracker, blueTarget, &_intervalBlue, blueIncrement, &_prevTimeBlue);
+
+    if ((_redTracker == redTarget && _greenTracker == greenTarget && _blueTracker == blueTarget) || (millis() - rampStartTime > ramp_time))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 void Vent::fadeOut(int16_t ramp_time, bool init)
 {
-    int16_t redIncrement = 1;
-    int16_t greenIncrement = 1;
-    int16_t blueIncrement = 1;
+    int16_t redIncrement = 5;
+    int16_t greenIncrement = 5;
+    int16_t blueIncrement = 5;
 
     _rampColor(&_redTracker, ramp_time, init, &_initRedTracker, 0, &_intervalRed, redIncrement, &_prevTimeRed);
     _rampColor(&_greenTracker, ramp_time, init, &_initGreenTracker, 0, &_intervalGreen, greenIncrement, &_prevTimeGreen);

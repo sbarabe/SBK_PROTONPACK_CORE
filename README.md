@@ -1,5 +1,5 @@
 # SBK_PROTONPACK_CORE
-## Version 2.3
+## Version 2.4
 Code for lights and sound effects of a Proton Pack replica or other props.
 
 ## Installation
@@ -149,5 +149,13 @@ This library is written by Samuel Barabé, inspired by other members of the open
 - added exits to sequence to assure smooth firing endings if powerdown or safety engage while firing ;
 - moved engines files to src subfolder : they are no longer visible in the Arduino IDE, only CORE and CONFIG file remain visible;
 - included  a modified HT16K33 library in the src subfolder : SBK_HT16K33.h
+
+2.4 Release 2024-10-31 :
+- added LEDs update rate limitation (5ms, and toggling between wand and pack leds chain) in main loop to reduce MCU load : it seems to help the DFPlayer to get all commands with no flaw or delay;
+- added dual boot switches mode : if you want to have a wand AND a pack power switches. You need to define a pack boot switch pin in the CONFIG.h file. Added function and helpers to get power state of both switches;
+- Modified AF/FE ring speed and update rates for faster animation ;
+- Fix wrong volume at startup with the volume potentiometer option ;
+- Modified Vent Engine animations for less demanding calculation, implement those modified animations in the Core file getLEDsSchemeForThisState() function.
+- Added the goes to over heat when both fire button and rod button push buttons are pressed while firing : you can fire with one button, and go straith to over heat when you hit the second button;
   
   

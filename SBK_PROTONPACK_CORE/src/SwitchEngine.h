@@ -1,5 +1,5 @@
 /*
- *  SwitchEngine.h is a part of SBK_PROTONPACK_CORE (VERSION 2.1) code for bar graph animations of a Proton Pack replica
+ *  SwitchEngine.h is a part of SBK_PROTONPACK_CORE (VERSION 2.4) code for bar graph animations of a Proton Pack replica
  *  Copyright (c) 2023-2024 Samuel Barabé
  *
  *  See this page for reference <https://github.com/sbarabe/SBK_PROTONPACK_CORE>.
@@ -26,6 +26,7 @@ class Switch
 public:
     Switch(uint8_t pin, bool reverse);
     void begin();
+    void setDebounce(uint8_t delay);
     bool getState();
     bool isON();
     bool toggleON();
@@ -42,6 +43,7 @@ bool getPushButtonState(bool reading, bool state, unsigned long last_debounce);
     bool _reading;
     bool _readingPrev;
     unsigned long _toggleNow;
+    uint8_t _debounceDelay;
 };
 
 

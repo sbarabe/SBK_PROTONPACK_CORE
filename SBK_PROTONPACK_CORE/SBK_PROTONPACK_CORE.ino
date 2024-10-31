@@ -20,7 +20,7 @@
  *
  *    SBK_PROTONPACK_CORE
  *    <https://github.com/sbarabe/SBK_PROTONPACK_CORE>
- *    Version 2.3
+ *    Version 2.4
  *
  *    This code was first intended to be use with the SBK Kid Proton Pack
  *    <https://github.com/sbarabe/SBK-KidSizeProtonPackArduino> but the code has been extended to
@@ -129,6 +129,8 @@ void playThisStateTrack(uint8_t track, bool looping);          // play state tra
 void checkPlayModeForThisState(bool looping);                  // check if play mode is correct for this state (looping / not looping)
 const bool NOLOOP = false;                                     // helper for audio track looping
 const bool LOOP = true;                                        // helper for audio track looping
+unsigned long prevLedsUpdate = 0;                              // helper to limit leds update rating (slowing MCU and make Player misses some commands)
+bool ledsUpdateToggle = true;                                  // helper to limit leds update rating (slowing MCU and make Player misses some commands)
 
 /*********************************************/
 /*           BAR GRAPH & DRIVER(s)           */
@@ -145,7 +147,7 @@ const bool LOOP = true;                                        // helper for aud
 #include <LedControl.h>
 MAX72xxDriver bargraph(BARGRAPH_TOTAL_LEDS, BG_DIRECTION, BG_DIN, BG_CLK, BG_LOAD);
 #elif defined(BG_HT16K33)
-#include "src/SBK_HT16K33/SBK_HT16K33.h"
+#include "src/SBK_HT16K33.h"
 HT16K33Driver bargraph(BARGRAPH_TOTAL_LEDS, BG_DIRECTION, BG_DIN, BG_CLK, BG_ADDRESS);
 #endif
 
@@ -259,10 +261,16 @@ void checkPlayThemesMode(); // Function for playing themes
 // For switches and buttons managing
 #include "src/SwitchEngine.h"
 Switch SWthemes(THEME_SWITCH_PIN, false);
-Switch SWboot(BOOT_SWITCH_PIN, false);
+Switch SWbootWand(WAND_BOOT_SWITCH_PIN, false);
+#ifdef PACK_BOOT_SWITCH_PIN
+Switch SWbootPack(PACK_BOOT_SWITCH_PIN, false);
+#endif
 Switch SWcharge(CHARGE_SWITCH_PIN, false);
 Switch PBfire(FIRE_BUTTON_PIN, false);
 Switch PBrod(ROD_BUTTON_PIN, false);
+// Function and helper to get dual boot switches
+bool bootSwitchesOutput = false;
+bool getDualBootSwitchesOutput(bool actual_output);
 
 /*********************************************/
 /*            AVAILABLE OPTIONS              */
@@ -321,6 +329,7 @@ void setup(void)
 #endif
   // Enable/disable software voume control with potentiometer
   player.defineVolumePot(VOL_POT_PIN, VOL_POT);
+  player.setVolWithPotatStart();
   lastCommand = millis();
 
   // setup pack's LEDs chain
@@ -351,10 +360,20 @@ void setup(void)
 
   // setup for the switches/buttons
   SWthemes.begin();
-  SWboot.begin();
   SWcharge.begin();
   PBfire.begin();
+  PBfire.setDebounce(100); // I prefer longer debounce for pushbutton
   PBrod.begin();
+  PBrod.setDebounce(100); // I prefer longer debounce for pushbutton
+  SWbootWand.begin();
+#ifdef PACK_BOOT_SWITCH_PIN
+  SWbootPack.begin();
+  // To check the actual output of the dual boot switches...
+  if (SWbootWand.isON() || SWbootPack.isON())
+  {
+    bootSwitchesOutput = true;
+  }
+#endif
 
   // Smoker setup
   smoker.begin();
@@ -387,23 +406,49 @@ void loop()
     }
   }
 
+  // LEDS UPDATE
+  // Update some LEDS each 5 ms, toggling each time between wand and pack leds chains
+  // This limit the update rates and help with the MCU load and code flow, and helps giving time to
+  // the sound FX player the digest all the commands...
+  if (millis() - prevLedsUpdate > 5)
+  {
+    prevLedsUpdate = millis();
+    if (ledsUpdateToggle)
+    {
   // Update LEDs color setting to last color schemes.
   bargraph.update();
+      wandVent.update();
+      firingRod.update();
+      // Update LEDs chains with last color schemes.
+      wandLeds.show();
+      ledsUpdateToggle = false;
+    }
+    else
+    {
+      // Update LEDs color setting to last color schemes.
   cyclotron.update();
   powercell.update();
-  wandVent.update();
   packVent.update();
-  firingRod.update();
   // Update LEDs chains with last color schemes.
-  wandLeds.show();
   packLeds.show();
+      ledsUpdateToggle = true;
+    }
+  }
 
   // Check buttons and switches readings and states
   SWthemes.getState();
-  SWboot.getState();
   SWcharge.getState();
   PBfire.getState();
   PBrod.getState();
+  SWbootWand.getState();
+  // To determine the output of the wand boot switch, or the dual wand and pack boot switches mode
+  // (see OPTION : DUAL BOOT SWITCHES in SBK_CONFIG.h)
+#ifdef PACK_BOOT_SWITCH_PIN
+  SWbootPack.getState();
+  bootSwitchesOutput = getDualBootSwitchesOutput(bootSwitchesOutput);
+#else
+  bootSwitchesOutput = SWbootWand.isON();
+#endif
 
   // Update smoker and rumbler
   smoker.update();
@@ -439,10 +484,10 @@ void loop()
 
     // This pack state loop :
     case 1:
-      checkPlayModeForThisState(TRACK_LOOPING[packState]); // Set playmode for this stage : this pack state is transient, so no looping...
-      getLEDsSchemeForThisState(packState);                // Pack state LEDs animations
-      checkPlayThemesMode();                               // Cut off sound effects if themes switch is ON
-      checkIfSwitchExit(SWboot.isON(), STATE_BOOTING);     // Pack state exit : check if the pack is booting
+      checkPlayModeForThisState(TRACK_LOOPING[packState]);  // Set playmode for this stage : this pack state is transient, so no looping...
+      getLEDsSchemeForThisState(packState);                 // Pack state LEDs animations
+      checkPlayThemesMode();                                // Cut off sound effects if themes switch is ON
+      checkIfSwitchExit(bootSwitchesOutput, STATE_BOOTING); // Pack state exit : check if the pack is booting
       break;
     }
 
@@ -470,10 +515,10 @@ void loop()
 
     // This pack state loop :
     case 1:
-      checkPlayModeForThisState(TRACK_LOOPING[packState]);         // Set playmode for this stage : this pack state is transient, so no cyling...
-      getLEDsSchemeForThisState(packState);                        // Pack state LEDs animations
-      checkPlayThemesMode();                                       // Cut off sound effects if themes switch is ON
-      if (!checkIfSwitchExit(!SWboot.isON(), STATE_SHUTTING_DOWN)) // Pack state exits : check if the pack is shutting down
+      checkPlayModeForThisState(TRACK_LOOPING[packState]);              // Set playmode for this stage : this pack state is transient, so no cyling...
+      getLEDsSchemeForThisState(packState);                             // Pack state LEDs animations
+      checkPlayThemesMode();                                            // Cut off sound effects if themes switch is ON
+      if (!checkIfSwitchExit(!bootSwitchesOutput, STATE_SHUTTING_DOWN)) // Pack state exits : check if the pack is shutting down
       {
         // Then check is pact state track is done playing and exit to next pack state
         checkIfTrackDoneExit(packState, STATE_IDLING_UNLOADED);
@@ -505,10 +550,10 @@ void loop()
 
     // This pack state loop :
     case 1:
-      checkPlayModeForThisState(TRACK_LOOPING[packState]);         // Set Playmode for this state : this state needs a looping track
-      getLEDsSchemeForThisState(packState);                        // Pack state LEDs animations
-      checkPlayThemesMode();                                       // Cut off sound effects if themes switch is ON
-      if (!checkIfSwitchExit(!SWboot.isON(), STATE_SHUTTING_DOWN)) // Pack state exits : check if the pack is shutting down
+      checkPlayModeForThisState(TRACK_LOOPING[packState]);              // Set Playmode for this state : this state needs a looping track
+      getLEDsSchemeForThisState(packState);                             // Pack state LEDs animations
+      checkPlayThemesMode();                                            // Cut off sound effects if themes switch is ON
+      if (!checkIfSwitchExit(!bootSwitchesOutput, STATE_SHUTTING_DOWN)) // Pack state exits : check if the pack is shutting down
       {
         checkIfSwitchExit(SWcharge.isON(), STATE_CHARGING); // Then check if safety switch is turned OFF : calling charging up sequence
       }
@@ -539,10 +584,10 @@ void loop()
 
     // This pack state loop :
     case 1:
-      checkPlayModeForThisState(TRACK_LOOPING[packState]);         // Set Playmode for this state : this state is not transient, so cylcing is ON
-      getLEDsSchemeForThisState(packState);                        // Pack state LEDs animations
-      checkPlayThemesMode();                                       // Cut off sound effects if themes switch is ON
-      if (!checkIfSwitchExit(!SWboot.isON(), STATE_SHUTTING_DOWN)) // Pack state exits : check if the pack is shutting down
+      checkPlayModeForThisState(TRACK_LOOPING[packState]);              // Set Playmode for this state : this state is not transient, so cylcing is ON
+      getLEDsSchemeForThisState(packState);                             // Pack state LEDs animations
+      checkPlayThemesMode();                                            // Cut off sound effects if themes switch is ON
+      if (!checkIfSwitchExit(!bootSwitchesOutput, STATE_SHUTTING_DOWN)) // Pack state exits : check if the pack is shutting down
       {
         if (!checkIfSwitchExit(!SWcharge.isON(), STATE_UNLOADING)) // then check if charging switch is OFF, go to unloarding state
         {
@@ -576,10 +621,10 @@ void loop()
 
     // This pack state loop :
     case 1:
-      checkPlayModeForThisState(TRACK_LOOPING[packState]);         // Set Playmode for this state : this is a transient stage, turn off cycling mode
-      getLEDsSchemeForThisState(packState);                        // Pack state LEDs animations
-      checkPlayThemesMode();                                       // Cut off sound effects if themes switch is ON
-      if (!checkIfSwitchExit(!SWboot.isON(), STATE_SHUTTING_DOWN)) // Pack state exits : check if the pack is shutting down
+      checkPlayModeForThisState(TRACK_LOOPING[packState]);              // Set Playmode for this state : this is a transient stage, turn off cycling mode
+      getLEDsSchemeForThisState(packState);                             // Pack state LEDs animations
+      checkPlayThemesMode();                                            // Cut off sound effects if themes switch is ON
+      if (!checkIfSwitchExit(!bootSwitchesOutput, STATE_SHUTTING_DOWN)) // Pack state exits : check if the pack is shutting down
       {
         if (!checkIfSwitchExit(!SWcharge.isON(), STATE_UNLOADING)) // Then check if safety backed ON
         {
@@ -613,10 +658,10 @@ void loop()
 
     // This pack state loop :
     case 1:
-      checkPlayModeForThisState(TRACK_LOOPING[packState]);         // Set Playmode for this state : this is a transient stage, turn off cycling mode
-      getLEDsSchemeForThisState(packState);                        // Pack state LEDs animations
-      checkPlayThemesMode();                                       // Cut off sound effects if themes switch is ON
-      if (!checkIfSwitchExit(!SWboot.isON(), STATE_SHUTTING_DOWN)) // Pack state exits : check if the pack is shutting down
+      checkPlayModeForThisState(TRACK_LOOPING[packState]);              // Set Playmode for this state : this is a transient stage, turn off cycling mode
+      getLEDsSchemeForThisState(packState);                             // Pack state LEDs animations
+      checkPlayThemesMode();                                            // Cut off sound effects if themes switch is ON
+      if (!checkIfSwitchExit(!bootSwitchesOutput, STATE_SHUTTING_DOWN)) // Pack state exits : check if the pack is shutting down
       {
         if (!checkIfSwitchExit(SWcharge.isON(), STATE_CHARGING)) // Then check if safety backed OFF
         {
@@ -650,15 +695,18 @@ void loop()
 
     // This pack state loop :
     case 1:
-      checkPlayModeForThisState(TRACK_LOOPING[packState]);         // Set Playmode for this state : this is a transient stage, turn off cycling mode
-      getLEDsSchemeForThisState(packState);                        // Pack state LEDs animations
-      rumbler.rumbleON();                                          // Start rumbler motor if not already start AND minimum off time delay respected
-      checkPlayThemesMode();                                       // Cut off sound effects if themes switch is ON
-      if (!checkIfSwitchExit(!SWboot.isON(), STATE_SHUTTING_DOWN)) // Pack state exits : check if the pack is shutting down
+      checkPlayModeForThisState(TRACK_LOOPING[packState]);              // Set Playmode for this state : this is a transient stage, turn off cycling mode
+      getLEDsSchemeForThisState(packState);                             // Pack state LEDs animations
+      rumbler.rumbleON();                                               // Start rumbler motor if not already start AND minimum off time delay respected
+      checkPlayThemesMode();                                            // Cut off sound effects if themes switch is ON
+      if (!checkIfSwitchExit(!bootSwitchesOutput, STATE_SHUTTING_DOWN)) // Pack state exits : check if the pack is shutting down
       {
         if (!checkIfSwitchExit(((!PBfire.isON() && !PBrod.isON()) || !SWcharge.isON()), STATE_TAIL)) // Then check if firing buttons are released, pack goes in tail state
         {
+          if (!checkIfSwitchExit((PBfire.isON() && PBrod.isON()), STATE_FIRING_OVERHEAT)) // Then check if both firing buttons are pressed, pack goes in overheat firing
+        {
           checkIfTrackDoneExit(packState, STATE_FIRING_MAX); // Then check is pact state track is done playing and exit to next pack state
+          }
         }
       }
       break;
@@ -688,11 +736,11 @@ void loop()
 
     // This pack state loop :
     case 1:
-      checkPlayModeForThisState(TRACK_LOOPING[packState]);         // Set Playmode for this state : this is a transient stage, turn off cycling mode
-      getLEDsSchemeForThisState(packState);                        // Pack state LEDs animations
-      rumbler.rumbleON();                                          // Start rumbler motor if not already start AND minimum off time delay respected
-      checkPlayThemesMode();                                       // Cut off sound effects if themes switch is ON
-      if (!checkIfSwitchExit(!SWboot.isON(), STATE_SHUTTING_DOWN)) // Pack state exits : check if the pack is shutting down
+      checkPlayModeForThisState(TRACK_LOOPING[packState]);              // Set Playmode for this state : this is a transient stage, turn off cycling mode
+      getLEDsSchemeForThisState(packState);                             // Pack state LEDs animations
+      rumbler.rumbleON();                                               // Start rumbler motor if not already start AND minimum off time delay respected
+      checkPlayThemesMode();                                            // Cut off sound effects if themes switch is ON
+      if (!checkIfSwitchExit(!bootSwitchesOutput, STATE_SHUTTING_DOWN)) // Pack state exits : check if the pack is shutting down
       {
         if (!checkIfSwitchExit(((!PBfire.isON() && !PBrod.isON()) || !SWcharge.isON()), STATE_TAIL)) // Then check if firing buttons are released, pack goes in tail state
         {
@@ -729,12 +777,12 @@ void loop()
 
     // This pack state loop :
     case 1:
-      checkPlayModeForThisState(TRACK_LOOPING[packState]);         // Set Playmode for this state : this is a transient stage, turn off cycling mode
-      getLEDsSchemeForThisState(packState);                        // Pack state LEDs animations
-      rumbler.rumbleON();                                          // Start rumbler motor if not already start AND minimum off time delay respected
-      smoker.smokeON();                                            // Start smoke module if not already start AND minimum off time delay respected
-      checkPlayThemesMode();                                       // Cut off sound effects if themes switch is ON
-      if (!checkIfSwitchExit(!SWboot.isON(), STATE_SHUTTING_DOWN)) // Pack state exits : check if the pack is shutting down
+      checkPlayModeForThisState(TRACK_LOOPING[packState]);              // Set Playmode for this state : this is a transient stage, turn off cycling mode
+      getLEDsSchemeForThisState(packState);                             // Pack state LEDs animations
+      rumbler.rumbleON();                                               // Start rumbler motor if not already start AND minimum off time delay respected
+      smoker.smokeON();                                                 // Start smoke module if not already start AND minimum off time delay respected
+      checkPlayThemesMode();                                            // Cut off sound effects if themes switch is ON
+      if (!checkIfSwitchExit(!bootSwitchesOutput, STATE_SHUTTING_DOWN)) // Pack state exits : check if the pack is shutting down
       {
         if (!checkIfSwitchExit(((!PBfire.isON() && !PBrod.isON()) || !SWcharge.isON()), STATE_OVERHEATED)) // Then check if firing buttons are released, pack goes in in overheated state
         {
@@ -768,10 +816,10 @@ void loop()
 
     // This pack state loop :
     case 1:
-      checkPlayModeForThisState(TRACK_LOOPING[packState]);         // Set Playmode for this state : this is a transient stage, turn off cycling mode
-      getLEDsSchemeForThisState(packState);                        // Pack state LEDs animations
-      checkPlayThemesMode();                                       // Cut off sound effects if themes switch is ON
-      if (!checkIfSwitchExit(!SWboot.isON(), STATE_SHUTTING_DOWN)) // Pack state exits : check if the pack is shutting down
+      checkPlayModeForThisState(TRACK_LOOPING[packState]);              // Set Playmode for this state : this is a transient stage, turn off cycling mode
+      getLEDsSchemeForThisState(packState);                             // Pack state LEDs animations
+      checkPlayThemesMode();                                            // Cut off sound effects if themes switch is ON
+      if (!checkIfSwitchExit(!bootSwitchesOutput, STATE_SHUTTING_DOWN)) // Pack state exits : check if the pack is shutting down
       {
         if (!checkIfSwitchExit(((PBfire.isON() || PBrod.isON()) && SWcharge.isON()), STATE_FIRING_RAMP))
         {                                                        // then check if fire buttons are ON, go to firing state
@@ -804,11 +852,11 @@ void loop()
 
     // This pack state loop :
     case 1:
-      checkPlayModeForThisState(TRACK_LOOPING[packState]);         // Set Playmode for this state : this is a transient stage, turn off cycling mode
-      getLEDsSchemeForThisState(packState);                        // Pack state LEDs animations
-      smoker.smokeON();                                            // Start smoke module if not already start AND minimum off time delay respected
-      checkPlayThemesMode();                                       // Cut off sound effects if themes switch is ON
-      if (!checkIfSwitchExit(!SWboot.isON(), STATE_SHUTTING_DOWN)) // Pack state exits : check if the pack is shutting down
+      checkPlayModeForThisState(TRACK_LOOPING[packState]);              // Set Playmode for this state : this is a transient stage, turn off cycling mode
+      getLEDsSchemeForThisState(packState);                             // Pack state LEDs animations
+      smoker.smokeON();                                                 // Start smoke module if not already start AND minimum off time delay respected
+      checkPlayThemesMode();                                            // Cut off sound effects if themes switch is ON
+      if (!checkIfSwitchExit(!bootSwitchesOutput, STATE_SHUTTING_DOWN)) // Pack state exits : check if the pack is shutting down
       {
         checkIfTrackDoneExit(packState, STATE_IDLING_CHARGED); // Then check is pact state track is done playing and exit to next pack state
       }
@@ -839,10 +887,10 @@ void loop()
 
     // This pack state loop :
     case 1:
-      checkPlayModeForThisState(TRACK_LOOPING[packState]);  // Set Playmode for this state : this is a transient stage, turn off cycling mode
-      getLEDsSchemeForThisState(packState);                 // Pack state LEDs animations
-      checkPlayThemesMode();                                // Cut off sound effects if themes switch is ON
-      if (!checkIfSwitchExit(SWboot.isON(), STATE_BOOTING)) // Pack state exits : check if the pack is booting up
+      checkPlayModeForThisState(TRACK_LOOPING[packState]);       // Set Playmode for this state : this is a transient stage, turn off cycling mode
+      getLEDsSchemeForThisState(packState);                      // Pack state LEDs animations
+      checkPlayThemesMode();                                     // Cut off sound effects if themes switch is ON
+      if (!checkIfSwitchExit(bootSwitchesOutput, STATE_BOOTING)) // Pack state exits : check if the pack is booting up
       {
         checkIfTrackDoneExit(packState, STATE_PWD_DOWN); // Then check is pact state track is done playing and exit to next pack state
       }
@@ -871,6 +919,11 @@ void getLEDsSchemeForThisState(uint8_t state)
     init = true;
   else // Pack state already initialized
     init = false;
+  // Trackers to help in vent fade transition within a pack stage
+  static bool vent2 = false;
+  static bool vent2_init = true;
+  static bool vent3 = false;
+  static bool vent3_init = true;
 
   switch (state)
   {
@@ -900,7 +953,7 @@ void getLEDsSchemeForThisState(uint8_t state)
     cyclotron.rampToIdleOne(3000, init);
     powercell.boot(3000, init);
     bargraph.boot(50, 50, init);
-    packVent.boot(3000, false); // to finish shutdown sequence if boot switch was turned ON when venting are not done
+    packVent.fadeOut(1000, false); // to finish shutdown sequence if boot switch was turned ON when venting are not done
     break;
 
   case STATE_IDLING_UNLOADED:
@@ -922,33 +975,34 @@ void getLEDsSchemeForThisState(uint8_t state)
   case STATE_IDLING_CHARGED:
     if (init)
     {
-      firingRodIndicator.clear();
       topYellowIndicator.clear();
       packVent.clear();
+      wandVent.clear();
     }
+    firingRodIndicator.orange(0);
     frontOrangeIndicator.orange(0);
     topWhiteIndicator.white(0);
     slowBlowIndicator.red(0);
     cyclotron.rampToIdleTwo(0, false); // just idling, no ramping
     powercell.rampToIdleTwo(0, false); // just idling, no ramping
     bargraph.idleTwo(70);
-    wandVent.rampToCoolBlue(0, false); // no ramping, just set to cool blue
+
     break;
 
   case STATE_CHARGING:
     if (init)
     {
-      firingRodIndicator.clear();
       topYellowIndicator.clear();
       frontOrangeIndicator.clear();
       packVent.clear();
+      wandVent.clear();
     }
+    firingRodIndicator.orange(INDICATOR_FAST_FLASH);
     topWhiteIndicator.white(INDICATOR_FAST_FLASH);
     slowBlowIndicator.red(0);
     powercell.rampToIdleTwo(2500, init);
     cyclotron.rampToIdleTwo(2500, init);
     bargraph.idleOne(50);
-    wandVent.rampToCoolBlue(2500, init);
     break;
 
   case STATE_UNLOADING:
@@ -958,13 +1012,13 @@ void getLEDsSchemeForThisState(uint8_t state)
       topYellowIndicator.clear();
       frontOrangeIndicator.clear();
       packVent.clear();
+      wandVent.clear();
     }
     topWhiteIndicator.white(INDICATOR_FAST_FLASH);
     slowBlowIndicator.red(0);
     powercell.rampToIdleOne(2500, init);
     cyclotron.rampToIdleOne(2500, init);
     bargraph.idleTwo(70);
-    wandVent.fadeOut(2500, init);
     firingRod.tail(1500);
     break;
 
@@ -974,13 +1028,14 @@ void getLEDsSchemeForThisState(uint8_t state)
       topYellowIndicator.clear();
     }
     topWhiteIndicator.white(0);
-    firingRodIndicator.yellow(0);
+    firingRodIndicator.orange(INDICATOR_SLOW_FLASH);
     frontOrangeIndicator.orange(0);
     slowBlowIndicator.red(0);
     cyclotron.rampToFiring(5000, init);
     powercell.rampToFiring(5000, init);
     bargraph.firing(50);
-    packVent.warming(20000, init);
+    packVent.rampToRed(16000, init);
+    wandVent.rampToCoolBlue(10000, init);
     firingRod.fireStrobe(20);
     break;
 
@@ -990,27 +1045,29 @@ void getLEDsSchemeForThisState(uint8_t state)
       topYellowIndicator.yellow(INDICATOR_MEDIUM_FLASH);
     }
     topWhiteIndicator.white(0);
-    firingRodIndicator.yellow(0);
+    firingRodIndicator.orange(INDICATOR_FAST_FLASH);
     frontOrangeIndicator.orange(0);
     slowBlowIndicator.red(0);
     cyclotron.rampToFiring(5000, false); // already initialized in STATE_FIRING_RAMP
     powercell.rampToFiring(5000, false); // already initialized in STATE_FIRING_RAMP
     bargraph.firing(50);
-    packVent.warming(20000, false); // already initialized in STATE_FIRING_RAMP
-    firingRod.fireStrobe(20);
+    packVent.rampToRed(16000, false);
+    wandVent.rampToCoolBlue(10000, false);
+    firingRod.fireStrobe(40);
     break;
 
   case STATE_FIRING_OVERHEAT:
     topYellowIndicator.red(INDICATOR_FAST_FLASH); // keep flashing from same pace as previous stage
     topWhiteIndicator.white(0);
-    firingRodIndicator.yellow(0);
+    firingRodIndicator.orange(INDICATOR_FAST_FLASH);
     frontOrangeIndicator.orange(0);
     slowBlowIndicator.red(0);
     cyclotron.rampToFiring(5000, false); // Sequence initialized in STATE_FIRING_RAMP
     powercell.rampToFiring(5000, false); // Sequence initialized in STATE_FIRING_RAMP
     bargraph.firing(50);
-    packVent.warming(15000, false); // Sequence initialized in STATE_FIRING_RAMP
-    firingRod.fireStrobe(20);
+    packVent.rampToOrange(3000, init);
+    wandVent.rampToRed(2000, init);
+    firingRod.fireStrobe(40);
     break;
 
   case STATE_TAIL:
@@ -1018,6 +1075,8 @@ void getLEDsSchemeForThisState(uint8_t state)
     {
       topYellowIndicator.clear();
       firingRodIndicator.clear();
+      vent2 = false;
+      vent2_init = false;
     }
     topWhiteIndicator.white(0);
     frontOrangeIndicator.orange(INDICATOR_MEDIUM_FLASH);
@@ -1026,13 +1085,31 @@ void getLEDsSchemeForThisState(uint8_t state)
     powercell.rampToIdleTwo(2000, init);
     cyclotron.rampToIdleTwo(2000, init);
     bargraph.idleTwo(70);
-    packVent.cooling(2000, init);
+    wandVent.fadeOut(2500, init);
+    if (!vent2)
+    {
+      if (packVent.rampToCoolBlue(1000, init))
+      {
+        vent2 = true;
+        vent2_init = true;
+      };
+    }
+    else
+    {
+      packVent.fadeOut(1800, vent2_init);
+      if (vent2_init)
+      {
+        vent2_init = false;
+      }
+    }
     break;
 
   case STATE_OVERHEATED:
     if (init)
     {
       firingRodIndicator.clear();
+      vent2 = false;
+      vent2_init = false;
     }
     frontOrangeIndicator.orange(INDICATOR_MEDIUM_FLASH);
     topYellowIndicator.red(INDICATOR_FAST_FLASH);
@@ -1041,7 +1118,23 @@ void getLEDsSchemeForThisState(uint8_t state)
     powercell.rampToIdleTwo(5000, init);
     cyclotron.rampToIdleTwo(5000, init);
     bargraph.idleTwo(70);
-    packVent.cooling(5000, init);
+    wandVent.fadeOut(4500, init);
+    if (!vent2)
+    {
+      if (packVent.rampToCoolBlue(3000, init))
+      {
+        vent2 = true;
+        vent2_init = true;
+      };
+    }
+    else
+    {
+      packVent.fadeOut(1800, vent2_init);
+      if (vent2_init)
+      {
+        vent2_init = false;
+      }
+    }
     break;
 
   case STATE_SHUTTING_DOWN:
@@ -1052,13 +1145,44 @@ void getLEDsSchemeForThisState(uint8_t state)
       firingRodIndicator.clear();
       frontOrangeIndicator.clear();
       wandVent.clear();
+      vent2 = false;
+      vent2_init = false;
+      vent3 = false;
+      vent3_init = false;
     }
     slowBlowIndicator.red(INDICATOR_FAST_FLASH);
     powercell.shuttingDown(3000, init);
     cyclotron.rampToPoweredDown(3000, init);
     bargraph.shuttingDown(50, init);
-    packVent.shutdown(3000, init);
     firingRod.tail(1500);
+    if (!vent2 && !vent3)
+    {
+      if (packVent.rampToRed(1000, init))
+      {
+        vent2 = true;
+        vent2_init = true;
+      };
+    }
+    else if (vent2 && !vent3)
+    {
+      if (packVent.rampToCoolBlue(1000, vent2_init))
+      {
+        vent3 = true;
+        vent3_init = true;
+      };
+      if (vent2_init)
+      {
+        vent2_init = false;
+      }
+    }
+    else
+    {
+      packVent.fadeOut(800, vent3_init);
+      if (vent3_init)
+      {
+        vent3_init = false;
+      }
+    }
     break;
   }
 }
@@ -1139,7 +1263,6 @@ void clearAllLights()
 {
   // Clear leds
   cyclotron.clear();
-  powercell.clear();
   bargraph.clear();
   packVent.clear();
   wandVent.clear();
@@ -1296,4 +1419,30 @@ void checkPlayModeForThisState(bool looping)
       cycling = false;
     }
   }
+}
+
+bool getDualBootSwitchesOutput(bool actual_output)
+{
+  bool new_output = false;
+#ifdef PACK_BOOT_SWITCH_PIN
+  if (!SWbootWand.isON() && !SWbootPack.isON()) // Both switches are OFF, output is OFF
+  {
+    new_output = false;
+  }
+  else if (SWbootWand.isON() && SWbootPack.isON()) // Both switches are ON, output is ON
+  {
+    new_output = true;
+  }
+  else if (actual_output = false && (SWbootWand.toggleON() || SWbootPack.toggleON())) // One switche is toggle ON while output is OFF, output is ON
+  {
+    new_output = true;
+  }
+  else if (actual_output = true && (SWbootWand.toggleOFF() || SWbootPack.toggleOFF())) // One switche is toggle OFF while output is ON, output is ON
+  {
+    new_output = false;
+  }
+#else
+  new_output = SWbootWand.toggleON();
+#endif
+  return new_output;
 }

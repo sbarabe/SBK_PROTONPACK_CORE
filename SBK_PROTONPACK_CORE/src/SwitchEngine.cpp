@@ -1,5 +1,5 @@
 /*
- *  switches.cpp is a part of SBK_PROTONPACK_CORE (VERSION 2.1) code for animations of a Proton Pack replica
+ *  switches.cpp is a part of SBK_PROTONPACK_CORE (VERSION 2.4) code for animations of a Proton Pack replica
  *  Copyright (c) 2023-2024 Samuel Barabé
  *
  *  See this page for reference <https://github.com/sbarabe/SBK_PROTONPACK_CORE>.
@@ -18,8 +18,6 @@
 
 #include "SwitchEngine.h"
 
-const uint8_t DEBOUNCE_DELAY = 50;
-
 Switch::Switch(uint8_t pin, bool reverse) : _pin(pin), _reverse(reverse)
 {
     _state = false;
@@ -27,11 +25,18 @@ Switch::Switch(uint8_t pin, bool reverse) : _pin(pin), _reverse(reverse)
     _reading = false;
     _readingPrev = false;
     _toggleNow = 0;
+    _debounceDelay=50;
 }
 
 void Switch::begin()
 {
     pinMode(_pin, INPUT_PULLUP);
+    getState();
+}
+
+void Switch::setDebounce(uint8_t delay){
+    constrain(delay,0,255);
+    _debounceDelay = delay;
 }
 
 bool Switch::getState()
@@ -57,7 +62,7 @@ bool Switch::getState()
     }
 
     // check if reading is maintained for the debounce delay
-    if (millis() - _toggleNow > DEBOUNCE_DELAY)
+    if (millis() - _toggleNow > _debounceDelay)
     {
         // If true and reading is different from current state, change state
         if (_reading != _state)

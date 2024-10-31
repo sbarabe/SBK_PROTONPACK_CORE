@@ -1,5 +1,5 @@
 /*
- *  PlayerEngine.h is a part of SBK_PROTONPACK_CORE (VERSION 2.1) code for sound effects and animations of a Proton Pack replica
+ *  PlayerEngine.h is a part of SBK_PROTONPACK_CORE (VERSION 2.4) code for sound effects and animations of a Proton Pack replica
  *  Copyright (c) 2023-2024 Samuel Barabé
  *
  *  See this page for reference <https://github.com/sbarabe/SBK_PROTONPACK_CORE>.
@@ -42,6 +42,7 @@ public:
     void previous();
     void setVol(uint8_t volume);
     void defineVolumePot(uint8_t pin, bool active);
+        uint8_t setVolWithPotatStart();
     uint8_t setVolWithPot();
     bool playing;
 
@@ -59,6 +60,7 @@ private:
     bool _volPotActive;
     unsigned long _TrackDuration;
     uint8_t _AUDIO_ADVANCE;
+    uint8_t _gain;
 };
 
 class Player_DFPlayerMini
@@ -79,6 +81,7 @@ public:
     void previous();
     void setVol(uint8_t volume);
     void defineVolumePot(uint8_t pin, bool active);
+        uint8_t setVolWithPotatStart();
     uint8_t setVolWithPot();
     bool playing;
 

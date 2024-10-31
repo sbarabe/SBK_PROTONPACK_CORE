@@ -1,5 +1,5 @@
 /*
- *  VentEngine.h is a part of SBK_PROTONPACK_CORE (VERSION 2.1) code for animations of a Proton Pack replica
+ *  VentEngine.h is a part of SBK_PROTONPACK_CORE (VERSION 2.4) code for animations of a Proton Pack replica
  *  Copyright (c) 2023-2024 Samuel Barabé
  *
  *  See this page for reference <https://github.com/sbarabe/SBK_PROTONPACK_CORE>.
@@ -33,7 +33,9 @@ public:
     void warming(int16_t warming_time, bool init);
     void cooling(int16_t cooling_time, bool init);
     void shutdown(int16_t cooling_time, bool init);
-    void rampToCoolBlue(int16_t ramp_time, bool init);
+    bool rampToCoolBlue(int16_t ramp_time, bool init);
+    bool rampToRed(int16_t ramp_time, bool init);
+    void rampToOrange(int16_t ramp_time, bool init);
     void fadeOut(int16_t ramp_time, bool init);
     void setColor(uint8_t red, uint8_t green, uint8_t blue);
 

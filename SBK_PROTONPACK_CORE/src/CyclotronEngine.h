@@ -1,5 +1,5 @@
 /*
- *  CyclotronEngine.h is a part of SBK_PROTONPACK_CORE (VERSION 2.1) code for animations of a Proton Pack replica
+ *  CyclotronEngine.h is a part of SBK_PROTONPACK_CORE (VERSION 2.4) code for animations of a Proton Pack replica
  *  Copyright (c) 2023-2024 Samuel Barabé
  *
  *  See this page for reference <https://github.com/sbarabe/SBK_PROTONPACK_CORE>.
@@ -101,9 +101,9 @@ private:
     void _setColorAll(uint8_t red, uint8_t green, uint8_t blue);
     void _setColor(uint16_t pixel, uint8_t red, uint8_t green, uint8_t blue);
     void _rotation();
-    void _ramp(uint16_t rampTime, bool init, int16_t tg_updateSp);
+    void _ramp(uint16_t rampTime, bool init, int16_t tg_updateSp, uint8_t track_inc);
     int16_t _ramp_parameter(int16_t param, int16_t ini, int16_t tg, int16_t incr);
-    void _idle(uint16_t updateSp);
+    void _idle(uint16_t updateSp, uint8_t tracker_increment);
 
     Adafruit_NeoPixel &_strip;
     bool _direction;

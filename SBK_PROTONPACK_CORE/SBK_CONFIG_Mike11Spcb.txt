@@ -1,5 +1,5 @@
 /*
- *  SBK_CONFIG.h is a part of SBK_PROTONPACK_CORE (VERSION 2.1) code for sound effects and animations of a Proton Pack replica
+ *  SBK_CONFIG.h is a part of SBK_PROTONPACK_CORE (VERSION 2.4) code for sound effects and animations of a Proton Pack replica
  *  Copyright (c) 2023-2024 Samuel Barabé
  *
  *  See this page for reference <https://github.com/sbarabe/SBK_PROTONPACK_CORE>.
@@ -54,10 +54,23 @@ bool const DEBUG = false;
 #define ROD_BUTTON_PIN 5    // same as fire button, but plays previous theme when pressed and released in "Themes mode"
 #define FIRE_BUTTON_PIN 4   // if in Idle Two state, fires gun. Also plays next theme when pressed and released in "Themes mode"
 #define CHARGE_SWITCH_PIN 6 // Goes from Idle One state to Idle Two state : gun can be fire when in Idle two state
-#define BOOT_SWITCH_PIN 7   // Goes from power down to Idle One state, or powered down when switch off from any state
+#define WAND_BOOT_SWITCH_PIN 7   // Goes from power down to Idle One state, or powered down when switch off from any state
 #define THEME_SWITCH_PIN 8  // Puts the pack in music mode, playings themes one after the other. Use fire/rod buttons to switch themes.
 // Those pin are the REQUIRED pins for pack CORE as it's coded in this unmodified version.
 // Others pins for options are defined later in the config file : smoker, rumbler, volume potentiometer.
+
+/*********************************************/
+/*       OPTION : DUAL BOOT SWITCHES         */
+/*********************************************/
+/* UNCOMMENT and DEFINE PIN if PACK BOOT SWITCHE exist and you want to use the dual switches mode with the wand boot swhitch */
+// #define PACK_BOOT_SWITCH_PIN 5
+/* Instead of wiring power to MCU to the pack boot switch, you can have it a input to the MCU and it will
+act same as the WAND BOOT SWITCHES : goes from Power Down state to Idle One pack state.
+This will be a dual boot switches between WAND and PACK boot switches : 
+>> Both switches are ON, pack is power up 
+>> Both switches are OFF, pack is power down
+>> One swith is toggle ON, pack is power UP 
+>> One switch is toggle OFF, pack is power down*/
 
 /*********************************************/
 /*          OPTION :SMOKE MACHINE            */
@@ -214,9 +227,9 @@ const uint8_t VOLUME_MAX = 25;             // 0-30 If you want to reduce the max
 const uint8_t VOLUME_START = 15;           // 0-30 Volume at star-up, will not change if volume potentiometer doesn't exist
 const uint16_t PLAYER_COMMAND_DELAY = 150; // short delay between query/ commands : some player(s) will behave weirdly if there is no delay
 const uint16_t AUDIO_ADVANCE = 150;        // short advance to call the next track before the reel ending : assure smooth transition between track, aka endless playing
-/****************************/
-/*     OPTION : VOL POT     */
-/****************************/
+/**************************************/
+/*     OPTION : VOL POTENTIOMETER     */
+/**************************************/
 /* UNCOMMENT and DEFINE PIN if potentiometer exists for software volume control by audio player */
 // #define VOL_POT_PIN A7    /* For software volume control with audio player*/
 /* If no pot exists, do not define it, fixed volume will be used as defined above : VOLUME_START. */
@@ -278,7 +291,7 @@ const uint16_t TRACK_LOOPING[] = {
     false, // track #4
     false, // track #5
     false, // track #6
-    true,  // track #7 Idle firing needs looping
+    true,  // track #7 Idle firing needs looping if shorter then FIRE_DURATION
     false, // track #8
     false, // track #9
     false, // track #10
@@ -312,8 +325,8 @@ const uint8_t STATE_SHUTTING_DOWN = 11;  // the pack is in the process of shutti
 /****************************/
 /*      GENERAL TIMER       */
 /****************************/
-const uint16_t FIRING_WARNING_DELAY = 10000; // in mS, how long before indicator is falshing yellow
-const uint32_t FIRING_DURATION = 40000;      // in mS, how long max firing state before overheat
+const uint16_t FIRING_WARNING_DELAY = 16000; // in mS, how long before indicator is falshing yellow
+const uint32_t FIRING_DURATION = 20000;      // in mS, how long max firing state before overheat
 
 /****************************/
 /* SOME ANIMATINONS OPTION  */

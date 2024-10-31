@@ -1,5 +1,5 @@
 /*
- *  IndicatorEngine.cpp is a part of SBK_PROTONPACK_CORE (VERSION 2.1) code for animations of a Proton Pack replica
+ *  IndicatorEngine.cpp is a part of SBK_PROTONPACK_CORE (VERSION 2.4) code for animations of a Proton Pack replica
  *  Copyright (c) 2023-2024 Samuel Barabé
  *
  *  See this page for reference <https://github.com/sbarabe/SBK_PROTONPACK_CORE>.
@@ -30,7 +30,8 @@ void Indicator::begin() { clear(); }
 
 void Indicator::setColor(uint8_t red, uint8_t green, uint8_t blue)
 {
-    _strip.setPixelColor(_pixel, _strip.gamma8(red), _strip.gamma8(green), _strip.gamma8(blue));
+   // _strip.setPixelColor(_pixel, _strip.gamma8(red), _strip.gamma8(green), _strip.gamma8(blue));
+   _strip.setPixelColor(_pixel, red, green, blue);
 }
 
 void Indicator::show()
@@ -45,7 +46,7 @@ void Indicator::clear()
 
 void Indicator::white(uint16_t updateSp) // flashing
 {
-  if (updateSp > 0)
+    if (updateSp > 0)
     {
         if (!_flashingState)
         {
@@ -57,8 +58,8 @@ void Indicator::white(uint16_t updateSp) // flashing
             _prevTime = millis();
             if (_pulse == true)
             {
-            _white();
-            _pulse = false;
+                _white();
+                _pulse = false;
             }
             else
             {
@@ -76,7 +77,7 @@ void Indicator::white(uint16_t updateSp) // flashing
 
 void Indicator::red(uint16_t updateSp) // flashing
 {
-  if (updateSp > 0)
+    if (updateSp > 0)
     {
         if (!_flashingState)
         {
@@ -88,8 +89,8 @@ void Indicator::red(uint16_t updateSp) // flashing
             _prevTime = millis();
             if (_pulse == true)
             {
-            _red();
-            _pulse = false;
+                _red();
+                _pulse = false;
             }
             else
             {
@@ -107,7 +108,7 @@ void Indicator::red(uint16_t updateSp) // flashing
 
 void Indicator::yellow(uint16_t updateSp) // flashing
 {
-   if (updateSp > 0)
+    if (updateSp > 0)
     {
         if (!_flashingState)
         {
@@ -119,8 +120,8 @@ void Indicator::yellow(uint16_t updateSp) // flashing
             _prevTime = millis();
             if (_pulse == true)
             {
-            _yellow();
-             _pulse = false;
+                _yellow();
+                _pulse = false;
             }
             else
             {
@@ -219,11 +220,78 @@ void Indicator::_green()
 {
 
     // setColor( _strip.gamma8(173),  _strip.gamma8(255),  _strip.gamma8(90));
-    setColor(173, 255, 90);
+    setColor(12, 189, 24);
 }
 
 void Indicator::_orange()
 {
     // setColor( _strip.gamma8(253),  _strip.gamma8(166),  _strip.gamma8(0));
     setColor(255, 100, 0);
+}
+
+
+
+
+SingleColorIndicator::SingleColorIndicator(uint8_t indicator_pin, bool state)
+    : _indicator_pin(indicator_pin), _state(state)
+{
+    _prevTime = 0;
+    _flashingState = false;
+    _pulse = false;
+}
+
+void SingleColorIndicator::begin() { 
+  pinMode(_indicator_pin,OUTPUT);
+  _write(_state); }
+
+void SingleColorIndicator::_write(bool state){
+    if(state !=_state){
+    digitalWrite(_indicator_pin,state);
+    _state = state;}
+}
+
+void SingleColorIndicator::on()
+{
+    _write(true);
+}
+
+void SingleColorIndicator::off()
+{
+    _write(false);
+}
+
+void SingleColorIndicator::clear()
+{
+    _write(false);
+}
+
+void SingleColorIndicator::flash(uint16_t updateSp) // flashing
+{
+    if (updateSp > 0)
+    {
+        if (!_flashingState)
+        {
+            _pulse = false;
+            _flashingState = true;
+        }
+        if ((millis() - _prevTime) >= updateSp)
+        {
+            _prevTime = millis();
+            if (_pulse == true)
+            {
+                on();
+                _pulse = false;
+            }
+            else
+            {
+                off();
+                _pulse = true;
+            }
+        }
+    }
+    else
+    {
+        on();
+        _flashingState = 0;
+    }
 }

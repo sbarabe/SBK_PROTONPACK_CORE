@@ -11,12 +11,7 @@
 #ifndef SBK_HT16K33_H
 #define SBK_HT16K33_H
 
-// include appropriate version of Arduino code
-#if (ARDUINO >= 100)
 #include "Arduino.h"
-#else
-#include "WProgram.h"
-#endif
 
 // include Wire for I2C comms
 #include <Wire.h>

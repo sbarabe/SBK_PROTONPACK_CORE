@@ -1,5 +1,5 @@
 /*
- *  CyclotronEngine.cpp is a part of SBK_PROTONPACK_CORE (VERSION 2.1) code for animations of a Proton Pack replica
+ *  CyclotronEngine.cpp is a part of SBK_PROTONPACK_CORE (VERSION 2.4) code for animations of a Proton Pack replica
  *  Copyright (c) 2023-2024 Samuel Barabé
  *
  *  See this page for reference <https://github.com/sbarabe/SBK_PROTONPACK_CORE>.
@@ -506,17 +506,17 @@ void Cyclotron_GB1_GB2::_setColor(uint16_t pixel, uint8_t red, uint8_t green, ui
 #define AFFE_PWD_FLASH 0
 #define AFFE_PWD_TRAIL 0
 // IDLE ONE animation targets
-#define AFFE_IDLE1_UPDATE_SP 25
+#define AFFE_IDLE1_UPDATE_SP 30
 // #define AFFE_IDLE1_HEAD 1
 // #define AFFE_IDLE1_FLASH 1
 // #define AFFE_IDLE1_TRAIL 5
 //  IDLE TWO animation targets
-#define AFFE_IDLE2_UPDATE_SP 15
+#define AFFE_IDLE2_UPDATE_SP 20
 // #define AFFE_IDLE2_HEAD 2
 // #define AFFE_IDLE2_FLASH 2
 // #define AFFE_IDLE2_TRAIL 7
 //  STATE_FIRING animation targets
-#define AFFE_FIRE_UPDATE_SP 1
+#define AFFE_FIRE_UPDATE_SP 10
 #define AFFE_FIRE_MAX_BRIGHTNESS 255
 #define AFFE_FIRE_HEAD 4
 #define AFFE_FIRE_FLASH 6
@@ -588,22 +588,22 @@ void Cyclotron_AF_FE::update()
 
 void Cyclotron_AF_FE::rampToPoweredDown(uint16_t ramp_time, bool init)
 {
-    _ramp(ramp_time, init, AFFE_PWD_UPDATE_SP);
+    _ramp(ramp_time, init, AFFE_PWD_UPDATE_SP, 2);
 }
 
 void Cyclotron_AF_FE::rampToIdleOne(uint16_t ramp_time, bool init) // Return true when animation is done
 {
-    _ramp(ramp_time, init, AFFE_IDLE1_UPDATE_SP);
+    _ramp(ramp_time, init, AFFE_IDLE1_UPDATE_SP, 2);
 }
 
 void Cyclotron_AF_FE::rampToIdleTwo(uint16_t ramp_time, bool init) // Return true when animation is done
 {
-    _ramp(ramp_time, init, AFFE_IDLE2_UPDATE_SP);
+    _ramp(ramp_time, init, AFFE_IDLE2_UPDATE_SP, 3);
 }
 
 void Cyclotron_AF_FE::rampToFiring(uint16_t ramp_time, bool init) // Return true when animation is done
 {
-    _ramp(ramp_time, init, AFFE_FIRE_UPDATE_SP);
+    _ramp(ramp_time, init, AFFE_FIRE_UPDATE_SP, 3);
 }
 
 void Cyclotron_AF_FE::setDirection(bool direction)
@@ -611,7 +611,7 @@ void Cyclotron_AF_FE::setDirection(bool direction)
     _direction = direction;
 }
 
-void Cyclotron_AF_FE::_idle(uint16_t updateSp) // Return true when animation is done
+void Cyclotron_AF_FE::_idle(uint16_t updateSp, uint8_t tracker_increment) // Return true when animation is done
 {
     _cycUpdateSp = updateSp;
     // Update cyclotron
@@ -630,7 +630,7 @@ void Cyclotron_AF_FE::_idle(uint16_t updateSp) // Return true when animation is 
         _prevTime = millis();
 
         _rotation();
-        _cycPosTracker += 1;
+        _cycPosTracker += tracker_increment;
         if (_cycPosTracker > _numLeds - 1)
         {
             _cycPosTracker = 0;
@@ -638,7 +638,7 @@ void Cyclotron_AF_FE::_idle(uint16_t updateSp) // Return true when animation is 
     }
 }
 
-void Cyclotron_AF_FE::_ramp(uint16_t rampTime, bool init, int16_t tg_updateSp)
+void Cyclotron_AF_FE::_ramp(uint16_t rampTime, bool init, int16_t tg_updateSp, uint8_t track_inc)
 {
 
     static int16_t iniUpSp;
@@ -660,7 +660,7 @@ void Cyclotron_AF_FE::_ramp(uint16_t rampTime, bool init, int16_t tg_updateSp)
         // Serial.println("cyclotron ramp initialisation !");
     }
 
-    _idle(_cycUpdateSp);
+    _idle(_cycUpdateSp, track_inc);
 
     // Ramp cyclotron UPDATE SPEED
     if (millis() - _prevUpdateSpTime >= int_updateSp)

@@ -1,5 +1,5 @@
 /*
- *  BarGraphEngine.cpp is a part of SBK_PROTONPACK_CORE (VERSION 2.1) code for bar graph animations of a Proton Pack replica
+ *  BarGraphEngine.cpp is a part of SBK_PROTONPACK_CORE (VERSION 2.4) code for bar graph animations of a Proton Pack replica
  *  Copyright (c) 2023-2024 Samuel Barabé
  *
  *  See this page for reference <https://github.com/sbarabe/SBK_PROTONPACK_CORE>.
