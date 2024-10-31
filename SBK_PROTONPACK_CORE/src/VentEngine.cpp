@@ -148,6 +148,7 @@ bool Vent::rampToCoolBlue(int16_t ramp_time, bool init)
 
 bool Vent::fadeOut(int16_t ramp_time, bool init)
 {
+    static unsigned long rampStartTime;
     if (init)
     {
         rampStartTime = millis();
