@@ -155,7 +155,7 @@ This library is written by Samuel Barabé, inspired by other members of the open
 - added dual boot switches mode : if you want to have a wand AND a pack power switches. You need to define a pack boot switch pin in the CONFIG.h file. Added function and helpers to get power state of both switches;
 - Modified AF/FE ring speed and update rates for faster animation ;
 - Fix wrong volume at startup with the volume potentiometer option ;
-- Modified Vent Engine animations for less demanding calculation, implement those modified animations in the Core file getLEDsSchemeForThisState() function.
+- Modified Vent Engine animations for less demanding calculations, modified animations implemented in the Core file getLEDsSchemeForThisState() function.
 - Added the goes to over heat when both fire button and rod button push buttons are pressed while firing : you can fire with one button, and go straith to over heat when you hit the second button;
   
   
