@@ -22,11 +22,13 @@
  *    Version 0
  *
  *    You can use this code to check your bar meter connections and mapping :
- *    1) Line 58 >>> Set the animation direction : FORWARD/REVERSE
- *    2) Line 62 >>> Set animation speed 
- *    3) Line 67 >>> Set the number of bar meter segments : #define SEG10 or SEG28
- *    4) Lines 71 to 123 >>> Check/edit bar meter leds mapping according to your connections and bar graph type
- *    5) Line 128 >>> Set the type of bar meter driver  : #define BG_HT16K33 or BG_MAX72xx
+ *    1) Line 60 >>> Set the animation direction : FORWARD/REVERSE
+ *    2) Line 64 >>> Set animation speed 
+ *    3) Line 69 >>> Set the number of bar meter segments : #define SEG10 or SEG28
+ *    4) Lines 71 to 163 >>> Check/edit bar meter leds mapping according to your connections and bar graph type :
+ *        - For SEG10, you can edit the mapping according to your connections at line 77.
+ *        - For SEG28, you can choose(and edit) between two preset mapping at line 94 according to your bar meter type and connections
+ *    5) Line 170 >>> Set the type of bar meter driver  : #define BG_HT16K33 or BG_MAX72xx
  *         - HT16K33 is an I2C driver working with SDA/SCL pins, good for short distance of no more then few inches usually.
  *         - MAX7219/MAX7221 drivers are serial drivers using 3 pins (DATA, CLOCK and LOAD), it is slower then I2C but better for long distance between Arduino and driver.
  *    
@@ -52,9 +54,9 @@
 /*********************************************/
 /*     BAR METER ANIMATION DIRECTION         */
 /*********************************************/
-#define FORWARD 0                   
-#define REVERSE 1   
-/*  DEFINE animation direction : */             
+#define FORWARD 0
+#define REVERSE 1
+/*  DEFINE animation direction : */
 const bool BG_DIRECTION = FORWARD;  // animation direction (FORWARD/REVERSE)
 // If you feel that you're bar meter animation is on the wrong side,
 // try to switch between FORWARD/REVERSE to see if it fix the problem.
@@ -65,7 +67,7 @@ const unsigned int SPEED = 250;
 /*     BAR METER DEFINITION AND MAPPING      */
 /*********************************************/
 /*  SELECT (uncomment only one) BAR METER SEGMENTS number :     */
-// #define SEG10 // for 10 segements bar meter
+//#define SEG10 // for 10 segements bar meter
 #define SEG28  // for 28 segments bar meter
 
 // Mapping for 10 segments bar meter
@@ -89,6 +91,12 @@ const uint8_t BG_SEG_MAP[BARGRAPH_TOTAL_LEDS][2] = {
 // Mapping for 28 segments bar meter
 #ifdef SEG28
 const uint8_t BARGRAPH_TOTAL_LEDS = 28;
+/* SELECT (uncomment) only one mapping type below  */
+//#define MAPPING1 // Common cathode bar meter type SA
+#define MAPPING2  // Common anode bar meter type SK
+
+/*  MAPPING 1 matrix definition, more associated with common cathode SA bar meter  */
+#ifdef MAPPING1
 /*  DEFINE segments mapping on bar graph driver {ROW,COL}.    */
 const uint8_t BG_SEG_MAP[BARGRAPH_TOTAL_LEDS][2] = {
   { 0, 0 },  // SEG #1
@@ -120,14 +128,48 @@ const uint8_t BG_SEG_MAP[BARGRAPH_TOTAL_LEDS][2] = {
   { 6, 2 },  // SEG #27
   { 6, 3 },  // SEG #28
 };
+
+/*  MAPPING 2 matrix definition, more associated with common cathode SK bar meter  */
+#elif defined(MAPPING2)
+const uint8_t BG_SEG_MAP[BARGRAPH_TOTAL_LEDS][2] = {
+  { 0, 0 },  // SEG #1
+  { 1, 0 },  // SEG #2
+  { 2, 0 },  // SEG #3
+  { 3, 0 },  // SEG #4
+  { 0, 1 },  // SEG #5
+  { 1, 1 },  // SEG #6
+  { 2, 1 },  // SEG #7
+  { 3, 1 },  // SEG #8
+  { 0, 2 },  // SEG #9
+  { 1, 2 },  // SEG #10
+  { 2, 2 },  // SEG #11
+  { 3, 2 },  // SEG #13
+  { 0, 3 },  // SEG #12
+  { 1, 3 },  // SEG #14
+  { 2, 3 },  // SEG #15
+  { 3, 3 },  // SEG #16
+  { 0, 4 },  // SEG #17
+  { 1, 4 },  // SEG #18
+  { 2, 4 },  // SEG #19
+  { 3, 4 },  // SEG #20
+  { 0, 5 },  // SEG #21
+  { 1, 5 },  // SEG #22
+  { 2, 5 },  // SEG #23
+  { 3, 5 },  // SEG #24
+  { 0, 6 },  // SEG #25
+  { 1, 6 },  // SEG #26
+  { 2, 6 },  // SEG #27
+  { 3, 6 },  // SEG #28
+};
+#endif
 #endif
 
 /*********************************************/
 /*          BAR METER DRIVER DEFINITION      */
 /*********************************************/
 /*  SELECT (uncomment) ONE DRIVER TYPE :     */
-#define BG_HT16K33 /* I2C LEDs driver like Adafruit backpack, use 2 pins : SDA, SDC */
-//#define BG_MAX72xx /* MAX7219/7221 use 3 pins serial communication : data, clock, load. */
+//#define BG_HT16K33 /* I2C LEDs driver like Adafruit backpack, use 2 pins : SDA, SDC */
+#define BG_MAX72xx /* MAX7219/7221 use 3 pins serial communication : data, clock, load. */
 
 // BAR METER HT16K33 DRIVER DEFINITION
 #ifdef BG_HT16K33
@@ -146,8 +188,8 @@ HT16K33Driver bargraph(BARGRAPH_TOTAL_LEDS, BG_DIRECTION, SDA_PIN, SCL_PIN, BG_A
 // MAX72xx drivers need serial communication defined with 3 pins, could be any pins.
 // Serial communication is more robust then I2C, better if the communication if more then a few inches away.
 #define BG_DIN 11   // connected to bar graph driver DataIn pin
-#define BG_CLK 13   // connected to bar graph driver Clock pin
-#define BG_LOAD 12  // connected to bar graph driver Load pin
+#define BG_CLK 12   // connected to bar graph driver Clock pin
+#define BG_LOAD 13  // connected to bar graph driver Load pin
 // Include the required library for the MAX72xx drivers
 #include <LedControl.h>
 MAX72xxDriver bargraph(BARGRAPH_TOTAL_LEDS, BG_DIRECTION, BG_DIN, BG_CLK, BG_LOAD);
