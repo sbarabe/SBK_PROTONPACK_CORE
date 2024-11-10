@@ -18,7 +18,7 @@
  *    GENERAL INFO :
  *
  *    SBK_BAR_METER_TEST
- *    <https://github.com/sbarabe/SBK_PROTON_PACK_CORE/SBK_BAR_METER_TEST>
+ *    <https://github.com/sbarabe/SBK_PROTONPACK_CORE/tree/main/SBK_BAR_METER_TEST>
  *    Version 0
  *
  *    You can use this code to check your bar meter connections and mapping :

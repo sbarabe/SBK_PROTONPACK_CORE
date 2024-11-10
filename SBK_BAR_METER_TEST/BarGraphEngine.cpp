@@ -1,14 +1,15 @@
 /*
- *  BarGraphEngine.cpp is a part of SBK_PROTONPACK_CORE (VERSION 2.1) code for bar graph animations of a Proton Pack replica
- *  Copyright (c) 2023-2024 Samuel Barabé
+ *  BarGraphEngine.cpp is a part of SBK_BAR_METER_TEST (VERSION 0) code to test the bar meter
+ *  connections and mapping used in many Ghostbusters props replica.
+ *  Copyright (c) 2024 Samuel Barabé
  *
- *  See this page for reference <https://github.com/sbarabe/SBK_PROTONPACK_CORE>.
+ *  See this page for reference <https://github.com/sbarabe/SBK_PROTONPACK_CORE/tree/main/SBK_BAR_METER_TEST>.
  *
- *  SBK_PROTONPACK_CORE is free software: you can redistribute it and/or modify it under the terms
+ *  SBK_BAR_METER_TEST is free software: you can redistribute it and/or modify it under the terms
  *  of the GNU General Public License as published by the Free Software Foundation, either version
  *  3 of the License, or (at your option) any later version.
  *
- *  SBK_PROTONPACK_CORE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ *  SBK_BAR_METER_TEST is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
  *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
  *  the GNU General Public License for more details.
  *
