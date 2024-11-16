@@ -876,11 +876,6 @@ void getLEDsSchemeForThisState(uint8_t state) {
     init = true;
   else  // Pack state already initialized
     init = false;
-  // Trackers to help in vent fade transition within a pack stage
-  static bool vent2 = false;
-  static bool vent2_init = true;
-  static bool vent3 = false;
-  static bool vent3_init = true;
 
   switch (state) {
     case STATE_PWD_DOWN:
@@ -1021,8 +1016,6 @@ void getLEDsSchemeForThisState(uint8_t state) {
       if (init) {
         topYellowIndicator.clear();
         firingRodIndicator.clear();
-        vent2 = false;
-        vent2_init = false;
       }
       topWhiteIndicator.white(0);
       frontOrangeIndicator.orange(INDICATOR_MEDIUM_FLASH);
@@ -1032,24 +1025,12 @@ void getLEDsSchemeForThisState(uint8_t state) {
       cyclotron.rampToIdleTwo(2000, init);
       bargraph.idleTwo(70);
       wandVent.fadeOut(2500, init);
-      if (!vent2) {
-        if (packVent.rampToCoolBlue(1000, init)) {
-          vent2 = true;
-          vent2_init = true;
-        };
-      } else {
-        packVent.fadeOut(1800, vent2_init);
-        if (vent2_init) {
-          vent2_init = false;
-        }
-      }
+      packVent.cooling(1000,1800,init); // Ramp to cool blue then fade out : (int ramp time, int fade out time, bool init)
       break;
 
     case STATE_OVERHEATED:
       if (init) {
         firingRodIndicator.clear();
-        vent2 = false;
-        vent2_init = false;
       }
       frontOrangeIndicator.orange(INDICATOR_MEDIUM_FLASH);
       topYellowIndicator.red(INDICATOR_FAST_FLASH);
@@ -1059,17 +1040,7 @@ void getLEDsSchemeForThisState(uint8_t state) {
       cyclotron.rampToIdleTwo(5000, init);
       bargraph.idleTwo(70);
       wandVent.fadeOut(4500, init);
-      if (!vent2) {
-        if (packVent.rampToCoolBlue(3000, init)) {
-          vent2 = true;
-          vent2_init = true;
-        };
-      } else {
-        packVent.fadeOut(1800, vent2_init);
-        if (vent2_init) {
-          vent2_init = false;
-        }
-      }
+      packVent.cooling(3000,1800,init); // Ramp to cool blue then fade out : (int ramp_time, int fadeOut_time, bool init)
       break;
 
     case STATE_SHUTTING_DOWN:
@@ -1079,35 +1050,13 @@ void getLEDsSchemeForThisState(uint8_t state) {
         firingRodIndicator.clear();
         frontOrangeIndicator.clear();
         wandVent.clear();
-        vent2 = false;
-        vent2_init = false;
-        vent3 = false;
-        vent3_init = false;
       }
       slowBlowIndicator.red(INDICATOR_FAST_FLASH);
       powercell.shuttingDown(3000, init);
       cyclotron.rampToPoweredDown(3000, init);
       bargraph.shuttingDown(50, init);
       firingRod.tail(1500);
-      if (!vent2 && !vent3) {
-        if (packVent.rampToRed(1000, init)) {
-          vent2 = true;
-          vent2_init = true;
-        };
-      } else if (vent2 && !vent3) {
-        if (packVent.rampToCoolBlue(1000, vent2_init)) {
-          vent3 = true;
-          vent3_init = true;
-        };
-        if (vent2_init) {
-          vent2_init = false;
-        }
-      } else {
-        packVent.fadeOut(800, vent3_init);
-        if (vent3_init) {
-          vent3_init = false;
-        }
-      }
+      packVent.shutdown(1000,1000,800,init); // Ramp to red, then ramp to cool blue, then fade out : (int red_ramp_time, int blue_ramp_time, int fadeOut_time, bool init)
       break;
   }
 }

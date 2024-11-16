@@ -37,8 +37,8 @@ public:
     // REMOVED ANIMATIONS BECAUSE THEY SEEMS TO CREATE BUGS
     // void boot(int16_t boot_time, bool init);
     // void warming(int16_t warming_time, bool init);
-    // void cooling(int16_t cooling_time, bool init);
-    // void shutdown(int16_t cooling_time, bool init);
+    void cooling(int16_t ramp_time, int16_t fadeOut_time, bool init);
+    void shutdown(int16_t red_ramp_time, int16_t blue_ramp_time, int16_t fadeOut_time, bool init);
 
 private:
     bool _rampColor(int16_t *colorTracker, int16_t rampTime, bool init, int16_t *initTracker, int16_t tg, int16_t *interval, int16_t increment, unsigned long *prevTime);
