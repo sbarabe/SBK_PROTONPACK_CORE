@@ -16,8 +16,8 @@
  *  see <https://www.gnu.org/licenses/>
  */
 
-#ifndef SBK_CONFIG_H
-#define SBK_CONFIG_H
+#ifndef ACONFIG_H
+#define ACONFIG_H
 
 #include <Arduino.h>
 
