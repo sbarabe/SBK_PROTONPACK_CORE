@@ -4,12 +4,12 @@ Code for lights and sound effects of a Proton Pack replica or other props.
 
 ## Installation
 
-1) After downloading, copy 'SBK_PROTONPACK_CORE' folder, including the 'src' subfolder, to your Arduino IDE sketches folder.
-2) If you want, you can use a pre-configure file that fits your needs : just rename the pre-configured SBK_CONFIG_***.txt file to SBK_CONFIG.h.
+1) After downloading, copy 'SBK_PROTONPACK_CORE' folder to your Arduino IDE sketches folder.
+2) If you want, you can use a pre-configure file that fits your needs : just rename the pre-configured SBK_CONFIG_***.txt file to ACONFIG.h.
 3) In Arduino IDe, open File->Sketchbook->SBK_PROTONPACK_CORE->SBK_PROTONPACK_CORE.ino, you will see two tabs :
      - SBK_PROTONPACK_CORE.ino
-     - SBK_CONFIG.h
-4) Select the SBK_CONFIG.h tab and check/modify this file to fit your hardware : pins definition, WS2812 LEDs index, audio tracks length, etc.
+     - ACONFIG.h
+4) Select the ACONFIG.h tab and check/modify this file to fit your hardware : pins definition, WS2812 LEDs index, audio tracks length, etc.
 5) Upload to your MCU.
    
 ### Library
@@ -58,14 +58,14 @@ Depending on your project hardware, the following library and their dependencies
 
 - ### Configurable
 
-  The SBK_CONFIG.h file contains all the definitions and options : pins, player module, LEDs index, audio tracks, etc. This is the file you want to customize to adjust your pins setting, LEDs chain and index, audio tracks info and other options. If you like the animations and the pack workflow, you should not have to change anything else then the config file.
+  The ACONFIG.h file contains all the definitions and options : pins, player module, LEDs index, audio tracks, etc. This is the file you want to customize to adjust your pins setting, LEDs chain and index, audio tracks info and other options. If you like the animations and the pack workflow, you should not have to change anything else then the config file.
 
   Be careful when working/changing animations times/speed regarding your audio tracks/pact states durations. They are all gathered in the getLEDsSchemeForThisState() function after the Main Loop in the core file. CAUTION : playing with times and speeds can really mess up the animations flow. It is highly suggested taking notes of the original values and changing a few of them at the time and see the effects.
 
     
   #### *** ADVANCED USERS ***
   
-  If you want to change animations styles and colors, you need to go in the engines files and modified the associated functions or create new ones. They are located in the 'src' subfolder : they are not visible in Arduino IDE when you open your sketch but you can still edit them in a text editor or in Visual Studio. Then you will have to implement them in the getLEDsSchemeForThisState() function in the core file.
+  If you want to change animations styles and colors, you need to go in the engines files and modified the associated functions or create new ones. Then you will have to implement them in the getLEDsSchemeForThisState() function in the core file.
 
   If you want to change the pack state switch/cases workflow, you will have to modify pack states list and audio tracks list/length/looping in the CONFIG file, and the Main Loop pact states switch/cases contents.
 
@@ -74,7 +74,7 @@ Depending on your project hardware, the following library and their dependencies
 
 - ### Code splited in organized files  
 
-  This code is based on objects programming, objects are defined in their *.h and *.cpp files. Objects instances are created and used in the core file SBK_PROTONPACK_CORE.ino. There is also a config file, SBK_CONFIG.h, where all basic parameters can be changed according to hardware used. This fully compartmented code helps keeping code cleaner and easier to update/maintain. This also prevent having an endless code hard to follow.
+  This code is based on objects programming, objects are defined in their *.h and *.cpp files. Objects instances are created and used in the core file SBK_PROTONPACK_CORE.ino. There is also a config file, ACONFIG.h, where all basic parameters can be changed according to hardware used. This fully compartmented code helps keeping code cleaner and easier to update/maintain. This also prevent having an endless code hard to follow.
  
 - ### Compatible HARDWARE
 
