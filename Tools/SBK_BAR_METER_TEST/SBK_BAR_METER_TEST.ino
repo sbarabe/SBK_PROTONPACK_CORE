@@ -1,5 +1,6 @@
 /**********************************************************************************************
- *    SBK_BAR_METER_TEST is a code to test the bar meter connections and mapping used in many Ghostbusters props replica.
+ *    SBK_BAR_METER_TEST is a code to test the bar meter connections and mapping used in many
+ *    Ghostbusters props replica.
  *    Copyright (c) 2024 Samuel Barabé
  *
  *    This program is free software: you can redistribute it and/or modify it under the terms
@@ -18,7 +19,7 @@
  *    GENERAL INFO :
  *
  *    SBK_BAR_METER_TEST
- *    <https://github.com/sbarabe/SBK_PROTONPACK_CORE/tree/main/SBK_BAR_METER_TEST>
+ *    <https://github.com/sbarabe/SBK_PROTONPACK_CORE/tree/main/Tools/SBK_BAR_METER_TEST>
  *    Version 0
  *
  *    You can use this code to check your bar meter connections and mapping :

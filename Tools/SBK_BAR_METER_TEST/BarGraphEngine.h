@@ -1,9 +1,9 @@
 /*
- *  BarGraphEngine.h is a part of SBK_BAR_METER_TEST (VERSION 0) code to test the bar meter
- *  connections and mapping used in many Ghostbusters props replica.
+ *  BarGraphEngine.h is a part of SBK_BAR_METER_TEST (VERSION 0) code for testing the bar meter
+ *  connections, mapping and communication used in many Ghostbusters props replica.
  *  Copyright (c) 2024 Samuel Barabé
  *
- *  See this page for reference <https://github.com/sbarabe/SBK_PROTONPACK_CORE/tree/main/SBK_BAR_METER_TEST>.
+ *  See this page for reference <https://github.com/sbarabe/SBK_PROTONPACK_CORE/tree/main/Tools/SBK_BAR_METER_TEST>.
  *
  *  SBK_BAR_METER_TEST is free software: you can redistribute it and/or modify it under the terms
  *  of the GNU General Public License as published by the Free Software Foundation, either version
