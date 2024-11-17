@@ -1,7 +1,7 @@
 /**********************************************************************************************
  *    SBK_SWITCHES_TEST is a code to test switches and push buttons connections used in many
  *    Ghostbusters props replica.
- *    Copyright (c) 2023-2024 Samuel Barabé
+ *    Copyright (c) 2024 Samuel Barabé
  *
  *    This program is free software: you can redistribute it and/or modify it under the terms
  *    of the GNU General Public License as published by the Free Software Foundation, either
