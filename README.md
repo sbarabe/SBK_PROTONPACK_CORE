@@ -94,7 +94,7 @@ Depending on your project hardware, the following library and their dependencies
 
   Supported audio player is the DFPlayer Mini, others could be added latter uppon request.
 
-  The actual CONFIG.h file as it is should be setup to work with :
+  The actual ACONFIG.h file as it is should be setup to work with :
   - MikeS11 pcb
   - HT16K33.h with 28 segments bar graph with common cathode
   - 1 LEDs strip for the wand : wandvent, indicators and firing jewel
