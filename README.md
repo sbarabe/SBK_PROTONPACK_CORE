@@ -6,7 +6,7 @@ Code for lights and sound effects of a Proton Pack replica or other props.
 
 1) After downloading, copy 'SBK_PROTONPACK_CORE' folder to your Arduino IDE sketches folder.
 2) If you want, you can use a pre-configure file that fits your needs : just rename the pre-configured SBK_CONFIG_***.txt file to ACONFIG.h.
-3) In Arduino IDe, open File->Sketchbook->SBK_PROTONPACK_CORE->SBK_PROTONPACK_CORE.ino, you will see two tabs :
+3) In Arduino IDe, open File->Sketchbook->SBK_PROTONPACK_CORE->SBK_PROTONPACK_CORE.ino, you will see a lot off tabs, but the two you have to work with are :
      - SBK_PROTONPACK_CORE.ino
      - ACONFIG.h
 4) Select the ACONFIG.h tab and check/modify this file to fit your hardware : pins definition, WS2812 LEDs index, audio tracks length, etc.
