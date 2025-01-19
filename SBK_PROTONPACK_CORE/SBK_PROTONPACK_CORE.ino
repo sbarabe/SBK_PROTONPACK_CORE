@@ -61,7 +61,7 @@
  *
  *    This code is based on objects programming, objects are defined in their *.h and *.cpp files. Objects
  *    instances are created and used in the core file SBK_PROTONPACK_CORE.ino. There is also a config file,
- *    SBK_CONFIG.h, where all basic parameters can be changed according to hardware used. This fully
+ *    ACONFIG.h, where all basic parameters can be changed according to hardware used. This fully
  *    compartmented code helps keeping code cleaner and easier to update/maintain. This also prevent having
  *    an endless code hard to follow.
  *
@@ -69,9 +69,9 @@
  *    file is the main file containing the setup and main code loops.
  *
  *    In your sketch folder, you should place SBK_PROTONPACK_CORE.ino file and all *.h files, and *.ccp files :
- *    SBK_CONFIG.h, PlayerEngine.h, PlayerEngine.cpp, BarGraphEngine.h, BarGraphEngine.cpp, etc.
+ *    ACONFIG.h, PlayerEngine.h, PlayerEngine.cpp, BarGraphEngine.h, BarGraphEngine.cpp, etc.
  *
- *    The SBK_CONFIG.h file contains all the definitions and options : pins, player module, LEDs index,
+ *    The ACONFIG.h file contains all the definitions and options : pins, player module, LEDs index,
  *    audio tracks, etc. This is the file you want to customize to adjust your pins setting, LEDs chain and index,
  *    audio tracks info and other options. If you like the animations and the pack workflow, you should not have
  *    to change anything else then the config file.
@@ -140,7 +140,7 @@ bool ledsUpdateToggle = true;                                   // helper to lim
 //  https://github.com/wayoda/LedControl?utm_source=platformio&utm_medium=piohome
 //  HT16K33.h library is used for HT16k33 driver. It should be install manually from a zip file in your IDE.
 //  https://github.com/MikeS11/ProtonPack/tree/master/Source/Libraries/ht16k33-arduino-master
-//  DRIVER should be defined in SBK_CONFIG.h file
+//  DRIVER should be defined in ACONFIG.h file
 //  Bargraph helper variables :
 #include "BarGraphEngine.h"
 #ifdef BG_MAX72xx
@@ -154,7 +154,7 @@ HT16K33Driver bargraph(BARGRAPH_TOTAL_LEDS, BG_DIRECTION, BG_DIN, BG_CLK, BG_ADD
 /***********************************************/
 /*                WS2812 LEDs                  */
 /***********************************************/
-//  LEDs chains and index should be defined in SBK_CONFIG.h file
+//  LEDs chains and index should be defined in ACONFIG.h file
 #include <Adafruit_NeoPixel.h>
 
 /*********************************************/
@@ -426,7 +426,7 @@ void loop() {
   PBrod.getState();
   SWbootWand.getState();
   // To determine the output of the wand boot switch, or the dual wand and pack boot switches mode
-  // (see OPTION : DUAL BOOT SWITCHES in SBK_CONFIG.h)
+  // (see OPTION : DUAL BOOT SWITCHES in ACONFIG.h)
 #ifdef PACK_BOOT_SWITCH_PIN
   SWbootPack.getState();
   bootSwitchesOutput = getDualBootSwitchesOutput(bootSwitchesOutput);
@@ -567,9 +567,9 @@ void loop() {
             if (!checkIfSwitchExit(!SWcharge.isON(), STATE_UNLOADING))  // then check if charging switch is OFF, go to unloarding state
             {
               checkIfSwitchExit((PBfire.isON() || PBrod.isON()), STATE_FIRING_RAMP);  // then check if fire buttons are ON, go to firing state
-            }
-            break;
+            } 
           }
+          break;
       }
 
       break;
