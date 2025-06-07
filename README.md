@@ -1,5 +1,12 @@
 # SBK_PROTONPACK_CORE
 ## Version 2.4
+
+⚠️ **Project Status: Deprecated**
+
+This version of **SBK_PROTONPACK_CORE** is no longer actively maintained. It remains fully functional and can still be used as-is, but no further updates or support will be provided.
+
+A new and improved version is currently in development and will be released in the future.
+
 Code for lights and sound effects of a Proton Pack replica or other props.
 
 ## Installation
