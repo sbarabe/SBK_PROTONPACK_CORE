@@ -53,8 +53,8 @@ WS2812Test packLedsAnimation(packLeds, 0, (PACK_TOTAL_LEDS_NUMBER - 1));
 /*********************************************/
 /*          WAND WS2812 leds chain           */
 /*********************************************/
-#define WD_LEDS 3                           // for wand LEDs chain
-const uint8_t WAND_TOTAL_LEDS_NUMBER = 13;  // Wand vent + indicators + firing jewel total WS21812 pixels
+#define WD_LEDS A1                           // for wand LEDs chain
+const uint8_t WAND_TOTAL_LEDS_NUMBER = 7;  // Wand vent + indicators + firing jewel total WS21812 pixels
 Adafruit_NeoPixel wandLeds = Adafruit_NeoPixel(WAND_TOTAL_LEDS_NUMBER, WD_LEDS, NEO_GRB + NEO_KHZ800);
 WS2812Test wandLedsAnimation(wandLeds, 0, (WAND_TOTAL_LEDS_NUMBER - 1));
 
